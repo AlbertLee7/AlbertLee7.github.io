@@ -159,6 +159,72 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Spark杂谈1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/09/Spark杂谈1/">Spark杂谈1</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/09/Spark杂谈1/" class="archive-article-date">
+  	<time datetime="2017-10-09T03:30:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-Spark为什么比Hadoop快"><a href="#1-Spark为什么比Hadoop快" class="headerlink" title="1. Spark为什么比Hadoop快"></a>1. Spark为什么比Hadoop快</h2><p>Spark比Hadoop快，由于Spark可以将中间结果缓存在内存中，避免频繁读取磁盘，因此在机器学习等需要对数据进行多次叠代计算的场景中，Spark比Hadoop快得多。然而即使在不使用内存缓存的场景中，Spark依然比Hadoop快，具体原因主要在以下方面：</p>
+<h3 id="1-1-进程与线程"><a href="#1-1-进程与线程" class="headerlink" title="1.1 进程与线程"></a>1.1 进程与线程</h3><p>Spark与Hadoop都会将程序分解成Task在节点运行，但Hadoop中的Task为进程，Spark中的Task为线程，因此在Task调度方面，Spark更轻更快。</p>
+<h3 id="1-2-编程语言"><a href="#1-2-编程语言" class="headerlink" title="1.2 编程语言"></a>1.2 编程语言</h3><p>Spark原生支持Scala语言，Hadoop采用Java语言。Scala语言是一种函数式语言，函数式编程语言不需要考虑死锁，因为它不修改变量，所以根本不存在”锁”线程的问题。不必担心一个线程的数据，被另一个线程修改，所以可以很放心地把工作分摊到多个线程，实现并发编程。因此，Scala的并行性明显优于面向对象的Java语言。<br>
+        
+          <a class="article-more-a" href="/2017/10/09/Spark杂谈1/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/09/Spark杂谈1/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-HBase系列1——简介及基本架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -755,70 +821,6 @@
 
 
   
-    <article id="post-JStorm源码阅读系列" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/02/JStorm源码阅读系列/">JStorm源码阅读系列</a>
-    </h1>
-  
-
-        
-        <a href="/2017/03/02/JStorm源码阅读系列/" class="archive-article-date">
-  	<time datetime="2017-03-02T13:43:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-02</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="一、JStorm简述"><a href="#一、JStorm简述" class="headerlink" title="一、JStorm简述"></a>一、JStorm简述</h2><p>　　JStorm在使用自带的集群管理中，主要包括Nimbus、Zookeeper、Supervisor、Worker四部分，其中Nimbus作为调度器，其功能主要为调度管理<br>topology，通过Zookeeper这一协调器，实时监测Supervisor发送过来的心跳包，当Supervisor出错时，Nimbus可以将故障节点上运行的task重新分配到其他正常节点上，实现JStorm集群较高的容错性。Supervisor管理节点上的workers，当某个worker出错时，Supervisor可以将该worker上运行的tasks，调度到其他worker上运行。Worker是Supervisor上运行的进程，一个Worker上面可运行多个task，每个Worker与节点的Port相对应。Zookeeper上存储了每个topology的信息、代码以及JStorm的的一些配置信息。Nimbus通过Zookeeper获得每个worker的心跳包，以及每个节点的信息，Supervisor通过Zookeeper获得每个Topology的信息，以及需要节点运行的task信息和代码。<br>
-        
-          <a class="article-more-a" href="/2017/03/02/JStorm源码阅读系列/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JStorm</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/02/JStorm源码阅读系列/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -933,19 +935,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Spark</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
+                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -954,6 +952,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">

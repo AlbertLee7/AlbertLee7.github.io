@@ -159,6 +159,72 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Spark读写HBase性能问题及解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/14/Spark读写HBase性能问题及解决方案/">Spark读写HBase性能问题及解决方案</a>
+    </h1>
+  
+
+        
+        <a href="/2018/07/14/Spark读写HBase性能问题及解决方案/" class="archive-article-date">
+  	<time datetime="2018-07-14T12:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>由于3月份换了电脑，更新博客的事情就耽搁下来，今天利用周六在家的空闲时间，在Mac上安装了hexo，总算能够正常更新博客了。</p>
+<p>最近做了几个数据量较大的项目，在Spark读写HBase时遇到了一系列的性能问题，造成Spark程序不能正常运行，甚至出现Spark任务运行十几个小时最终报异常的情况，最终经过对HBase表的调整和Spark程序的优化，实现了性能的显著提升。下面主要讲解一下整个过程中遇到的一些问题，以及最终的解决方法。</p>
+<h2 id="1-HBase没有预分区导致RegionServer卡死的问题"><a href="#1-HBase没有预分区导致RegionServer卡死的问题" class="headerlink" title="1. HBase没有预分区导致RegionServer卡死的问题"></a>1. HBase没有预分区导致RegionServer卡死的问题</h2>
+        
+          <a class="article-more-a" href="/2018/07/14/Spark读写HBase性能问题及解决方案/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/07/14/Spark读写HBase性能问题及解决方案/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-2017年度总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -750,72 +816,6 @@
 
 
   
-    <article id="post-Spark杂谈1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/09/Spark杂谈1/">Spark杂谈1</a>
-    </h1>
-  
-
-        
-        <a href="/2017/10/09/Spark杂谈1/" class="archive-article-date">
-  	<time datetime="2017-10-09T03:30:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-Spark为什么比Hadoop快"><a href="#1-Spark为什么比Hadoop快" class="headerlink" title="1. Spark为什么比Hadoop快"></a>1. Spark为什么比Hadoop快</h2><p>Spark比Hadoop快，由于Spark可以将中间结果缓存在内存中，避免频繁读取磁盘，因此在机器学习等需要对数据进行多次叠代计算的场景中，Spark比Hadoop快得多。然而即使在不使用内存缓存的场景中，Spark依然比Hadoop快，具体原因主要在以下方面：</p>
-<h3 id="1-1-进程与线程"><a href="#1-1-进程与线程" class="headerlink" title="1.1 进程与线程"></a>1.1 进程与线程</h3><p>Spark与Hadoop都会将程序分解成Task在节点运行，但Hadoop中的Task为进程，Spark中的Task为线程，因此在Task调度方面，Spark更轻更快。</p>
-<h3 id="1-2-编程语言"><a href="#1-2-编程语言" class="headerlink" title="1.2 编程语言"></a>1.2 编程语言</h3><p>Spark原生支持Scala语言，Hadoop采用Java语言。Scala语言是一种函数式语言，函数式编程语言不需要考虑死锁，因为它不修改变量，所以根本不存在”锁”线程的问题。不必担心一个线程的数据，被另一个线程修改，所以可以很放心地把工作分摊到多个线程，实现并发编程。因此，Scala的并行性明显优于面向对象的Java语言。<br>
-        
-          <a class="article-more-a" href="/2017/10/09/Spark杂谈1/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/10/09/Spark杂谈1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -930,19 +930,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Spark</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
+                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -951,6 +947,10 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">

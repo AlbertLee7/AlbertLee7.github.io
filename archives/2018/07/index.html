@@ -6,26 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>HBase系列2——读写流程 | AlbertLee的博客</title>
+  <title>Archives: 2018/7 | AlbertLee的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1. HBase写入流程  HBase写入流程主要分为四部分，分别为Client端写入、写入HLog日志、写入MemStore、MemStore溢出到HFile落地磁盘 1.1 Client端用户写入HBase数据时，首先会通过HBase提供的API接口，调用Put类，将数据写入本地缓存，若用户设置的AutoFlush=Ture(默认)，则每调用一次Put操作，Client会将请求立即发送给HBa">
-<meta name="keywords" content="HBase">
-<meta property="og:type" content="article">
-<meta property="og:title" content="HBase系列2——读写流程">
-<meta property="og:url" content="http://yoursite.com/2017/10/12/HBase系列2——读写流程/index.html">
+  <meta name="description" content="大数据开发工程师，主要研究Spark、Storm、HBase、ElasticSearch">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AlbertLee的博客">
+<meta property="og:url" content="http://yoursite.com/archives/2018/07/index.html">
 <meta property="og:site_name" content="AlbertLee的博客">
-<meta property="og:description" content="1. HBase写入流程  HBase写入流程主要分为四部分，分别为Client端写入、写入HLog日志、写入MemStore、MemStore溢出到HFile落地磁盘 1.1 Client端用户写入HBase数据时，首先会通过HBase提供的API接口，调用Put类，将数据写入本地缓存，若用户设置的AutoFlush=Ture(默认)，则每调用一次Put操作，Client会将请求立即发送给HBa">
+<meta property="og:description" content="大数据开发工程师，主要研究Spark、Storm、HBase、ElasticSearch">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/HLog%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E5%8F%96%E6%B5%81%E7%A8%8B1.png">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E5%8F%96%E6%B5%81%E7%A8%8B2.png">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/HFile%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/HBase%20%E7%B4%A2%E5%BC%95%E6%9C%BA%E5%88%B6.png">
-<meta property="og:updated_time" content="2018-07-14T11:28:19.332Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HBase系列2——读写流程">
-<meta name="twitter:description" content="1. HBase写入流程  HBase写入流程主要分为四部分，分别为Client端写入、写入HLog日志、写入MemStore、MemStore溢出到HFile落地磁盘 1.1 Client端用户写入HBase数据时，首先会通过HBase提供的API接口，调用Put类，将数据写入本地缓存，若用户设置的AutoFlush=Ture(默认)，则每调用一次Put操作，Client会将请求立即发送给HBa">
-<meta name="twitter:image" content="http://ojr3dihlp.bkt.clouddn.com/HLog%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.png">
+<meta name="twitter:title" content="AlbertLee的博客">
+<meta name="twitter:description" content="大数据开发工程师，主要研究Spark、Storm、HBase、ElasticSearch">
   
     <link rel="alternative" href="/atom.xml" title="AlbertLee的博客" type="application/atom+xml">
   
@@ -165,57 +157,36 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-HBase系列2——读写流程" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      HBase系列2——读写流程
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2018/07/14/Spark读写HBase性能问题及解决方案/" class="archive-article-date">
+  	<time datetime="2018-07-14T12:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-14</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2018/07/14/Spark读写HBase性能问题及解决方案/">Spark读写HBase性能问题及解决方案</a>
     </h1>
   
 
-        
-        <a href="/2017/10/12/HBase系列2——读写流程/" class="archive-article-date">
-  	<time datetime="2017-10-12T07:06:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-HBase写入流程"><a href="#1-HBase写入流程" class="headerlink" title="1. HBase写入流程"></a>1. HBase写入流程</h2><p>  HBase写入流程主要分为四部分，分别为Client端写入、写入HLog日志、写入MemStore、MemStore溢出到HFile落地磁盘</p>
-<h3 id="1-1-Client端"><a href="#1-1-Client端" class="headerlink" title="1.1 Client端"></a>1.1 Client端</h3><p>用户写入HBase数据时，首先会通过HBase提供的API接口，调用Put类，将数据写入本地缓存，若用户设置的AutoFlush=Ture(默认)，则每调用一次Put操作，Client会将请求立即发送给HBase集群；若用户设置的AutoFlush=False，则每调用一次Put操作，Client会将请求缓存至本地缓存，当缓存达到阈值时(默认2M)，会批量向HBase集群提交Put请求，也可以调优flushcommit()方法强制将缓存中的put请求提交至HBase集群。<br>两种提交方式相比，AutoFlush=False的批量操作数据吞吐量更高，但是由于Put请求都缓存在本地缓存，因此存在数据丢失的风险。<br>上述提及的Put批量提交是通过关闭AutoFlush机制实现的，与使用List<put>这种方法异曲同工，List<put>将多个Put操作放入List中，通过提交List<put>的方法也可以实现批量写入。<br><a id="more"></a></put></put></put></p>
-<h3 id="1-2-HLog"><a href="#1-2-HLog" class="headerlink" title="1.2 HLog"></a>1.2 HLog</h3><p>HBase为了保证数据不会丢失，采用了Write-Ahead-Logging(WAL)机制。HRegionServer接收到数据后，首先将数据顺序写入(Append)到HLog文件(每个HRegionServer对应一个HLog文件)，HLog文件中每条数据存储格式为LogSeqNum-WriteTime-ClusterIds-RegionName-TableName。HLog文件在HDFS中存储，在HRegionServer宕机情况时，HMaster将该HRegionServer对应的Region分配至其他正常HRegionServer中，并从HDFS中读取HLog文件，将宕机时丢失的数据在新节点中恢复。HLog文件不会越来越大，因为当MemStore缓存的数据溢出到HFile文件时，会将HLog文件中对应的数据删除，MemStore与HLog的数据是通过SequenceId实现关联的。<br><img src="http://ojr3dihlp.bkt.clouddn.com/HLog%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.png" alt=""><br>HBase中可以通过设置WAL的持久化等级决定是否开启WAL机制、以及HLog的落盘方式。</p>
-<ol>
-<li>SKIP_WAL：只写缓存，不写HLog日志。</li>
-<li>ASYNC_WAL：异步将数据写入HLog日志中。</li>
-<li>SYNC_WAL(默认方式)：同步将数据写入日志文件中，数据只是被写入文件系统中，并没有真正落盘。</li>
-<li>FSYNC_WAL：同步将数据写入日志文件并强制落盘。最严格的日志写入等级，可以保证数据不会丢失，但是性能相对比较差。<h3 id="1-3-MemStore"><a href="#1-3-MemStore" class="headerlink" title="1.3 MemStore"></a>1.3 MemStore</h3>在HRegionServer的Region中每个Store存在一个MemStore，HBase的写入性能与MemStore密切相关，数据在写入HLog后，会再写入MemStore中，当达到溢出条件时，MemStore中的数据会溢出成HFile文件存入HDFS中。<br>需要注意的是，MemStore溢出时是Region中的所有Store都会溢出。这也是为什么建议ColumnFamily数量少一些的原因，若存在cf1、cf2、cf3多个ColumnFamily，且cf3中频繁写入数据，则当cf3对应的Store中的MemStore满时，cf1、cf2、cf3三个对应的MemStore都要进行溢出操作，性能较差。<h2 id="2-HBase读取流程"><a href="#2-HBase读取流程" class="headerlink" title="2. HBase读取流程"></a>2. HBase读取流程</h2>HBase的存储基于LSM树(Log-Structured Merge Tree)结构，一次范围查询可能会涉及多个分片、多块缓存甚至多个数据存储文件，同时HBase中更新操作以及删除操作实现都很简单，更新操作并没有更新原有数据，而是直接写入数据并更新版本。删除操作也并没有真正删除原有数据，只是插入了一条打上”deleted”标签的数据，而真正的数据删除发生在系统异步执行Major_Compact的时候。这种实现大大简化了数据更新、删除流程，但是对于数据读取来说则需要根据版本进行过滤，同时对已经标记删除的数据也要进行过滤，同时，Major_Compact对HFile合并并删除数据的过程成为HBase中对性能影响较大的操作。<h3 id="2-1-Client端"><a href="#2-1-Client端" class="headerlink" title="2.1 Client端"></a>2.1 Client端</h3><img src="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E5%8F%96%E6%B5%81%E7%A8%8B1.png" alt=""></li>
-<li>Client端读取数据时首先从Zookeeper中获取存储-META-表的HRegionServer地址，然后从该HRegionServer中读取-META-表并缓存在本地缓存中。(0.9.5版本后的HBase已经取消掉-ROOT-表）。</li>
-<li>Client根据RowKey从本地缓存的-META-表查询，获得存储该RowKey数据的HRegionServer地址，并向该HRegionServer发送读请求。</li>
-<li>当HBase更新-MEAT-表时，Client根据缓存的旧-MEAT-表查询数据会时会报异常，这时客户端会重新从Zookeeper中拉取新的-META-表。</li>
-<li>Client向HBase写入数据时，也需要向读取数据时一样，从Zookeeper读取-META-表读取到本地缓存，并基于缓存到本地的-META-表，获取HRegionServer地址，并向该HRegionServer发送数据写入请求。</li>
-<li>由该流程可知，Client端读写数据时只会与Zookeeper和HRegionServer进行交互，HMaster不会参与，因此HMaster负载较轻，且HMaster故障时不会影响HBase的读写，不会称为性能瓶颈点和故障点。<h3 id="2-2-HRegionServer服务端"><a href="#2-2-HRegionServer服务端" class="headerlink" title="2.2 HRegionServer服务端"></a>2.2 HRegionServer服务端</h3><img src="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E5%8F%96%E6%B5%81%E7%A8%8B2.png" alt=""></li>
-<li>服务端数据查询顺序为：BlockCache -&gt; MemStore -&gt; HFile</li>
-<li>HRegionServer在接收到Client发送来的Scan/Get操作后，首先会在每个Region中构建一个RegionScanner，RegionScanner会为Region下的每个列族，即每个Store构建一个StoreScanner。每个StoreScanner会为Store下的每个HFile构建一个StoreFileScanner，并为MemStore构建MemStoreScanner。</li>
-<li>StoreFileScanner与MemStoreScanner根据RowKey过滤掉无效的Scanner，这个过程会用到BloomFilter，因此BloomFilter对HBase的查询性能有较大影响。</li>
-<li>有效的StoreFileScanner根据RowKey首先在BlockCache中查找数据，若BlockCache中没有，则在MemStore中查找，若依然没有，最后才会在HFile中根据二分查找法查找数据。</li>
-<li>将该Store中所有StoreFileScanner和MemStoreScanner查找到的数据按从小到大排序构建最小堆。</li>
-<li>将所有的StoreScanner查找到的结构按小到大排序合并构建最小堆。</li>
-</ol>
-<h3 id="2-3-HFile索引机制"><a href="#2-3-HFile索引机制" class="headerlink" title="2.3 HFile索引机制"></a>2.3 HFile索引机制</h3><p>HFile文件结构如下图所示：</p>
-<p><img src="http://ojr3dihlp.bkt.clouddn.com/HFile%E9%80%BB%E8%BE%91%E7%BB%93%E6%9E%84.png" alt=""><br>StoreFileScanner对HFile文件进行索引时，首先根据RowKey从HRegionServer的BlockCache中查找，若BlockCache中存在查找的数据，则直接读取；若BlockCache中没有所需数据，则从HFile中查找。首先会查询HFile的IndexBlock，从IndexBlock中查询RowKey所对应的DataBlock。为了提高查询速度，IndexBlock分为三级索引结构，即RootIndexBlock、IntermediateIndexBlock和LeafIndexBlock。经过索引三层索引获得DataBlock的所在位置，然后在DataBlock中查询RowKey所对应的数据。HFile索引过程如下图所示：<br><img src="http://ojr3dihlp.bkt.clouddn.com/HBase%20%E7%B4%A2%E5%BC%95%E6%9C%BA%E5%88%B6.png" alt=""></p>
-<p>ps: 参考文献及图片来源：<a href="http://hbasefly.com/" target="_blank" rel="noopener"><strong>有态度的HBase/Spark/BigData</strong></a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -227,113 +198,19 @@
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/10/12/HBase系列2——读写流程/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2017/10/13/HBase系列3——表结构设计/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          HBase系列3——表结构设计
-        
-      </div>
-    </a>
   
   
-    <a href="/2017/10/09/《SQL学习指南》阅读总结/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">《SQL学习指南》阅读总结</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-
-
-
-
-  
-    <div class="duoshuo"></div>
+    </div></section>
   
 
-
-
-<section id="comments">
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-    var disqus_shortname = 'albertlee'; // required: replace example with your forum shortname
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</section>
+    
 
 
           </div>
@@ -356,8 +233,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
