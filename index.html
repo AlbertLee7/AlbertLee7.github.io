@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
   
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
@@ -30,7 +30,7 @@
     #container.show {
       background: linear-gradient(200deg,#a0cfe4,#e8c37e);
     }
-  </style>
+  </style><!-- hexo-inject:begin --><!-- hexo-inject:end -->
   
 
   
@@ -38,7 +38,7 @@
 </head>
 
 <body>
-  <div id="container" q-class="show:isCtnShow">
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container" q-class="show:isCtnShow">
     <canvas id="anm-canvas" class="anm-canvas"></canvas>
     <div class="left-col" q-class="show:isShow">
       
@@ -158,6 +158,70 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-《统计学习方法1——统计学习方法概论》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/14/《统计学习方法1——统计学习方法概论》/">《统计学习方法1——统计学习方法概论》</a>
+    </h1>
+  
+
+        
+        <a href="/2018/07/14/《统计学习方法1——统计学习方法概论》/" class="archive-article-date">
+  	<time datetime="2018-07-14T14:03:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-机器学习规划"><a href="#1-机器学习规划" class="headerlink" title="1. 机器学习规划"></a>1. 机器学习规划</h2><p>做大数据已经有2年多的时间，Spark、HBase、ElasticSearch等大数据组件也在多个项目中进行了应用实践，总想着除了在广度上多接触各类大数据开源组件之外，还应该在深度上多做些研究，因为从早期 MR引擎到Spark引擎再到FLink引擎等，各种工具层次不穷，我不想只是做一个工程开发人员，我想做数据分析方面的专家，沿着<strong>大数据应用—&gt;机器学习—&gt;深度学习</strong>的路线发展。因此后面打算利用3个月的时间，进行机器学习的一个入门学习。主要的学习思路是：<strong>《统计学习方法》—&gt;《机器学习》(西瓜书) —&gt; 《机器学习实践》与TensorFlow的使用</strong>，我会在博客上更新所学到的知识点以及学习心得，也算是一个自我鞭策过程。<br>
+        
+          <a class="article-more-a" href="/2018/07/14/《统计学习方法1——统计学习方法概论》/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ML</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/07/14/《统计学习方法1——统计学习方法概论》/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
   
     <article id="post-Spark读写HBase性能问题及解决方案" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -750,72 +814,6 @@
 
 
   
-    <article id="post-《SQL学习指南》阅读总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/09/《SQL学习指南》阅读总结/">《SQL学习指南》阅读总结</a>
-    </h1>
-  
-
-        
-        <a href="/2017/10/09/《SQL学习指南》阅读总结/" class="archive-article-date">
-  	<time datetime="2017-10-09T07:00:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-09</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-写在前面"><a href="#1-写在前面" class="headerlink" title="1. 写在前面"></a>1. 写在前面</h2><p>SQL语句在工作中经常使用，之前阅读过《SQL必知必会》，但并没有系统的学习过SQL，国庆8天假期，借此机会系统的阅读了《SQL学习指南》一书。越来越发现每次阅读完一本书，如果能够好好的总结，用自己的语言复述一遍书中的主要知识点，往往能够得到更多收获。由于本文完全是我对着该书目录，按照自己的记忆进行的简单知识总结，所以文中知识点并不全面和严谨，仅供参考。</p>
-<h2 id="2-阅读总结"><a href="#2-阅读总结" class="headerlink" title="2. 阅读总结"></a>2. 阅读总结</h2><p>SQL语言在多种数据库中都得到了广泛应用，无论是MYSQL、Orcale、SQL Server等关系型数据库，还是Hive、HBase等大数据组件，都可以使用SQL语言进行数据的查询等操作(HBase需要通过Phoenix来进行SQL查询，Phoenix是构建在HBase上的一个SQL层）。同时，不仅是数据库管理人员，程序开发人员、数据统计/挖掘人员也需要掌握一定的SQL。SQL语言主要包括实现对数据库的CRUD操作。</p>
-<h3 id="2-1-MySQL数据类型"><a href="#2-1-MySQL数据类型" class="headerlink" title="2.1 MySQL数据类型"></a>2.1 MySQL数据类型</h3><h4 id="2-1-1-字符数据类型"><a href="#2-1-1-字符数据类型" class="headerlink" title="2.1.1 字符数据类型"></a>2.1.1 字符数据类型</h4><p>字符型数据主要为char(n)和varchar(n)，两种，char为定长类型，n为数据长度，当数据长度不够长时，向右使用空格补足。vachar可以做到变长，n为最大数据长度。因为varchar最大可以做到65535，所以一般情况下varchar即可满足字符类型的大部分需要，对于文本数据，则需要使用text类型。<br>
-        
-          <a class="article-more-a" href="/2017/10/09/《SQL学习指南》阅读总结/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">SQL</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/10/09/《SQL学习指南》阅读总结/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -930,6 +928,10 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Spark</a>
               </li>
              
@@ -950,11 +952,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color4">SQL</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">SQL</a>
+                <a href="javascript:void(0)" class="js-tag color3">ML</a>
               </li>
             
             <div class="clearfix"></div>
@@ -1110,6 +1112,6 @@ MathJax.Hub.Queue(function() {
     </div>
 
 </div>
-  </div>
+  </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </body>
 </html>
