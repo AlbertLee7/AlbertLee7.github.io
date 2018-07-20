@@ -159,6 +159,267 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-HBase系列5——性能优化" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/15/HBase系列5——性能优化/">HBase系列5——性能优化</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/15/HBase系列5——性能优化/" class="archive-article-date">
+  	<time datetime="2017-10-15T02:43:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>HBase的性能优化主要围绕提升HBase的读写性能围绕，包括Client端程序优化以及HBase服务端参数配置优化。其中，Client端可以从减少RPC调用次数入手，使用缓存，采用批量请求的方式。HBase服务端参数配置优化，又主要包括良好的RowKey设置保证负载均衡，良好的ColumnFamily设置，适当的MemStore Flush配置和Compaction配置以及合理的内存规划等方面。</p>
+<h2 id="1-读性能优化"><a href="#1-读性能优化" class="headerlink" title="1. 读性能优化"></a>1. 读性能优化</h2><p><img src="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%962.png" alt=""></p>
+<h3 id="1-1-Client端"><a href="#1-1-Client端" class="headerlink" title="1.1 Client端"></a>1.1 Client端</h3><h4 id="1-1-1-减少RPC请求次数"><a href="#1-1-1-减少RPC请求次数" class="headerlink" title="1.1.1 减少RPC请求次数"></a>1.1.1 减少RPC请求次数</h4><p>Client端查询程序开发时，针对Get请求，在Client端宕机时允许Get请求丢失一部分的情况下，可以采用批量Get请求的方式，减少RPC请求次数。针对Scan请求，默认会每次从HBase服务端拉取100条数据进行缓存，当Scan的数据量较大时，我们可以增大Caching的条数，每次从HBase服务端拉取1000条数据，从而减少RPC请求次数。<br>
+        
+          <a class="article-more-a" href="/2017/10/15/HBase系列5——性能优化/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/15/HBase系列5——性能优化/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-HBase系列4——API介绍与Spark读写HBase" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/">HBase系列4——常用API介绍与Spark读写HBase</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/" class="archive-article-date">
+  	<time datetime="2017-10-14T09:34:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-Java-API"><a href="#1-Java-API" class="headerlink" title="1. Java API"></a>1. Java API</h2><p>Java API包括了对HBase的各种操作，本节主要对Java API中的基本操作进行简要介绍，诸如批量处理以及过滤器的使用等高级API，感兴趣的可以进一步了解。Java API中的CRUD主要通过HTable类提供的方法实现，而管理和创建HBase表，则通过HBaseAdmin类实现。</p>
+<h3 id="1-1-Get-操作"><a href="#1-1-Get-操作" class="headerlink" title="1.1 Get 操作"></a>1.1 Get 操作</h3><p>Get操作包括单次Get请求和批量Get请求，我们以单次Get请求为例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Configuration conf = HBaseConfiguration.create();</span><br><span class="line">HTable table = <span class="keyword">new</span> HTable(conf, <span class="string">"testtable"</span>);</span><br><span class="line">Get get = <span class="keyword">new</span> Get(Bytes.toBytes(<span class="string">"row1"</span>));</span><br><span class="line">get.addColumn(Bytes.toBytes(<span class="string">"colfam1"</span>), Bytes.toBytes(<span class="string">"qual1"</span>));</span><br><span class="line">Result result = table.get(get);</span><br><span class="line"><span class="keyword">byte</span>[] val = result.getValue(Bytes.toBytes(<span class="string">"colfam1"</span>), Bytes.toBytes(<span class="string">"qual1"</span>));</span><br><span class="line">table.close();</span><br><span class="line">System.out.println(<span class="string">"Value: "</span> + Bytes.toString(val));</span><br></pre></td></tr></table></figure></p>
+        
+          <a class="article-more-a" href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-HBase系列3——表结构设计" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/13/HBase系列3——表结构设计/">HBase系列3——表结构设计</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/13/HBase系列3——表结构设计/" class="archive-article-date">
+  	<time datetime="2017-10-13T05:36:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-表结构设计至关重要"><a href="#1-表结构设计至关重要" class="headerlink" title="1. 表结构设计至关重要"></a>1. 表结构设计至关重要</h2><p>在使用HBase的过程中，HBase表结构设计的优劣对读写性能有着较大影响。由于HBase只能对RowKey进行索引，因此若RowKey没有针对具体需求做特殊设计，Client端在Get/Scan数据表时，往往需要遍历Row中的所有数据列，并做一些较为复杂的逻辑处理，才能得到所需数据，读写性能较差。RowKey的设计还需要考虑到HBase的RowKey采用从小到大字典排序的特点，且RowKey相同的数据会在同一个HRegionServer中，当RowKey相似或存在数据热点时，大量的数据会存储在同一个HRegionServer中，对数据读写时会存在单点性能瓶颈，无法发挥HBase分布式存储的优势。ColumnFamily数量、数据的压缩方式、数据版本数、数据时间周期TTL以及二级索引表等，对HBase的性能也有着重要影响，这些参数在进行HBase表结构设计时，都需要着重考虑，只有全面考虑才能最大发挥HBase的性能优势。</p>
+<h2 id="2-建表示例"><a href="#2-建表示例" class="headerlink" title="2. 建表示例"></a>2. 建表示例</h2><p><code>create &#39;TestTable&#39;, {NAME=&gt;&#39;CF1&#39;, BLOOMFILTER=&gt;&#39;ROW&#39;, BLOCKSIZE=&gt;&#39;65536&#39;, VERSIONS=&gt;&#39;3&#39;, COMPRESSION=&gt;&#39;SNAPPY&#39;, BLOCKCACHE=&gt;&#39;true&#39;, IN_MEMORY=&gt;&#39;false&#39;, TTL=&gt;&#39;3600&#39;}</code><br>以上建表语句，表示建立一个名为TestTable的表，只有一个名为CF1的列簇，该列簇中BLOOMFILTER为ROW方式，HFile数据块大小为65536B(64KB)，版本数为3，数据采用SNAPPY的压缩方式，BLOCKCACHE为true(默认)，IN_MEMORY为false(默认)<br>， 数据存储周期为3600s。建表语句中具体参数含义会下面会具体解释。<br>
+        
+          <a class="article-more-a" href="/2017/10/13/HBase系列3——表结构设计/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/13/HBase系列3——表结构设计/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-HBase系列2——读写流程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/12/HBase系列2——读写流程/">HBase系列2——读写流程</a>
+    </h1>
+  
+
+        
+        <a href="/2017/10/12/HBase系列2——读写流程/" class="archive-article-date">
+  	<time datetime="2017-10-12T07:06:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-HBase写入流程"><a href="#1-HBase写入流程" class="headerlink" title="1. HBase写入流程"></a>1. HBase写入流程</h2><p>  HBase写入流程主要分为四部分，分别为Client端写入、写入HLog日志、写入MemStore、MemStore溢出到HFile落地磁盘</p>
+<h3 id="1-1-Client端"><a href="#1-1-Client端" class="headerlink" title="1.1 Client端"></a>1.1 Client端</h3><p>用户写入HBase数据时，首先会通过HBase提供的API接口，调用Put类，将数据写入本地缓存，若用户设置的AutoFlush=Ture(默认)，则每调用一次Put操作，Client会将请求立即发送给HBase集群；若用户设置的AutoFlush=False，则每调用一次Put操作，Client会将请求缓存至本地缓存，当缓存达到阈值时(默认2M)，会批量向HBase集群提交Put请求，也可以调优flushcommit()方法强制将缓存中的put请求提交至HBase集群。<br>两种提交方式相比，AutoFlush=False的批量操作数据吞吐量更高，但是由于Put请求都缓存在本地缓存，因此存在数据丢失的风险。<br>上述提及的Put批量提交是通过关闭AutoFlush机制实现的，与使用List<put>这种方法异曲同工，List<put>将多个Put操作放入List中，通过提交List<put>的方法也可以实现批量写入。<br>
+        
+          <a class="article-more-a" href="/2017/10/12/HBase系列2——读写流程/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/10/12/HBase系列2——读写流程/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-《SQL学习指南》阅读总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -550,279 +811,6 @@
 
 
   
-    <article id="post-JStorm源码阅读系列3—TopologyBuilder分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/26/JStorm源码阅读系列3—TopologyBuilder分析/">JStorm源码阅读系列3——TopologyBuilder分析</a>
-    </h1>
-  
-
-        
-        <a href="/2017/03/26/JStorm源码阅读系列3—TopologyBuilder分析/" class="archive-article-date">
-  	<time datetime="2017-03-26T02:34:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="一、TopologyBuilder-class-Topology模版"><a href="#一、TopologyBuilder-class-Topology模版" class="headerlink" title="一、TopologyBuilder.class Topology模版"></a>一、TopologyBuilder.class Topology模版</h2><p>　　TopologyBuilder提供了Java API的模版，我们通过TopologyBuilder可以建立属于自己的Topology并调用submitTopology方法即可在JStorm集群上启动该Topology。在JStorm源码中，TopologyBuilder.class中有如下注释，为我们提供了建立Topology的模版：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//集群模式下</span></span><br><span class="line">  TopologyBuilder builder = <span class="keyword">new</span> TopologyBuilder();</span><br><span class="line">  </span><br><span class="line">  builder.setSpout(&amp;quot;<span class="number">1</span>&amp;quot;, <span class="keyword">new</span> TestWordSpout(<span class="keyword">true</span>), <span class="number">5</span>);</span><br><span class="line">  builder.setSpout(&amp;quot;<span class="number">2</span>&amp;quot;, <span class="keyword">new</span> TestWordSpout(<span class="keyword">true</span>), <span class="number">3</span>);</span><br><span class="line">  builder.setBolt(&amp;quot;<span class="number">3</span>&amp;quot;, <span class="keyword">new</span> TestWordCounter(), <span class="number">3</span>).fieldsGrouping(&amp;quot;<span class="number">1</span>&amp;quot;, <span class="keyword">new</span> Fields(&amp;quot;word&amp;quot;)).fieldsGrouping(&amp;quot;<span class="number">2</span>&amp;quot;, <span class="keyword">new</span> Fields(&amp;quot;word&amp;quot;));</span><br><span class="line">  builder.setBolt(&amp;quot;<span class="number">4</span>&amp;quot;, <span class="keyword">new</span> TestGlobalCount()).globalGrouping(&amp;quot;<span class="number">1</span>&amp;quot;);</span><br><span class="line">  </span><br><span class="line">  Map conf = <span class="keyword">new</span> HashMap();</span><br><span class="line">  conf.put(Config.TOPOLOGY_WORKERS, <span class="number">4</span>);</span><br><span class="line">  </span><br><span class="line">  StormSubmitter.submitTopology(&amp;quot;mytopology&amp;quot;, conf, builder.createTopology());</span><br><span class="line"></span><br><span class="line"><span class="comment">//本地模式下</span></span><br><span class="line">  TopologyBuilder builder = <span class="keyword">new</span> TopologyBuilder();</span><br><span class="line">  </span><br><span class="line">  builder.setSpout(&amp;quot;<span class="number">1</span>&amp;quot;, <span class="keyword">new</span> TestWordSpout(<span class="keyword">true</span>), <span class="number">5</span>);</span><br><span class="line">  builder.setSpout(&amp;quot;<span class="number">2</span>&amp;quot;, <span class="keyword">new</span> TestWordSpout(<span class="keyword">true</span>), <span class="number">3</span>);</span><br><span class="line">  builder.setBolt(&amp;quot;<span class="number">3</span>&amp;quot;, <span class="keyword">new</span> TestWordCounter(), <span class="number">3</span>).fieldsGrouping(&amp;quot;<span class="number">1</span>&amp;quot;, <span class="keyword">new</span> Fields(&amp;quot;word&amp;quot;)).fieldsGrouping(&amp;quot;<span class="number">2</span>&amp;quot;, <span class="keyword">new</span> Fields(&amp;quot;word&amp;quot;));</span><br><span class="line">  builder.setBolt(&amp;quot;<span class="number">4</span>&amp;quot;, <span class="keyword">new</span> TestGlobalCount()).globalGrouping(&amp;quot;<span class="number">1</span>&amp;quot;);</span><br><span class="line">  </span><br><span class="line">  Map conf = <span class="keyword">new</span> HashMap();</span><br><span class="line">  conf.put(Config.TOPOLOGY_WORKERS, <span class="number">4</span>);</span><br><span class="line">  conf.put(Config.TOPOLOGY_DEBUG, <span class="keyword">true</span>);</span><br><span class="line">  </span><br><span class="line">  LocalCluster cluster = <span class="keyword">new</span> LocalCluster();</span><br><span class="line">  cluster.submitTopology(&amp;quot;mytopology&amp;quot;, conf, builder.createTopology());</span><br><span class="line">  Utils.sleep(<span class="number">10000</span>);</span><br><span class="line">  cluster.shutdown();</span><br></pre></td></tr></table></figure></p>
-        
-          <a class="article-more-a" href="/2017/03/26/JStorm源码阅读系列3—TopologyBuilder分析/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JStorm</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/26/JStorm源码阅读系列3—TopologyBuilder分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-JStorm源码阅读系列1—Nimbus启动流程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/22/JStorm源码阅读系列1—Nimbus启动流程/">JStorm源码阅读系列1——Nimbus启动流程</a>
-    </h1>
-  
-
-        
-        <a href="/2017/03/22/JStorm源码阅读系列1—Nimbus启动流程/" class="archive-article-date">
-  	<time datetime="2017-03-22T15:16:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="一、NimbusServer-class-main方法"><a href="#一、NimbusServer-class-main方法" class="headerlink" title="一、NimbusServer.class main方法"></a>一、NimbusServer.class main方法</h2><p>　　运行$JSTORM_HOME/bin/jstorm nimbus即可运行Nimbus启动程序，JStorm会<br>调用com.alibaba.jstorm.daemon.nimbus包中的NimbusServer.class的main方法。<br>　　1. 调用Utils.readStormConfig()方法，从default.yaml、storm.yaml和storm.options中读取JStorm的相关配置，返回(Map)conf，后面的许多操作都要用到conf。<br>　　2. 新建DefaultInimbus实例，DefaultInimbus类实现了INimbus接口，实现了allSlotsAvailableForScheduling方法，在该方法中可以得到整个可以供Nimbus调度的Collection<workerslot>。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> Collection&lt;WorkerSlot&gt; <span class="title">allSlotsAvailableForScheduling</span><span class="params">(Collection&lt;SupervisorDetails&gt; existingSupervisors, Topologies topologies,</span></span></span><br><span class="line"><span class="function"><span class="params">          Set&lt;String&gt; topologiesMissingAssignments)</span> </span>&#123;</span><br><span class="line">      <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">      Collection&lt;WorkerSlot&gt; result = <span class="keyword">new</span> HashSet&lt;WorkerSlot&gt;();</span><br><span class="line">      <span class="keyword">for</span> (SupervisorDetails detail : existingSupervisors) &#123;</span><br><span class="line">          <span class="keyword">for</span> (Integer port : detail.getAllPorts())</span><br><span class="line">              result.add(<span class="keyword">new</span> WorkerSlot(detail.getId(), port));</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> result;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></workerslot></p>
-<p>　　3. 新建NimbusServer实例instance，并调用instance.launchServer方法。<br>
-        
-          <a class="article-more-a" href="/2017/03/22/JStorm源码阅读系列1—Nimbus启动流程/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JStorm</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/22/JStorm源码阅读系列1—Nimbus启动流程/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Java编程思想读书笔记4" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/20/Java编程思想读书笔记4/">《Java编程思想》读书笔记——4</a>
-    </h1>
-  
-
-        
-        <a href="/2017/03/20/Java编程思想读书笔记4/" class="archive-article-date">
-  	<time datetime="2017-03-20T15:04:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-20</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="《Java编程思想》第18章——Java-I-O系统"><a href="#《Java编程思想》第18章——Java-I-O系统" class="headerlink" title="《Java编程思想》第18章——Java I/O系统"></a>《Java编程思想》第18章——Java I/O系统</h2><ol>
-<li>File类既能代表一个特定文件的名称，又能代表一个目录下的一组文件的名称。如果它指的是一个文件集，我们就可以对此集合调用list()方法，这个方法会返回一个字符数组。</li>
-<li>通过继承，任何自InputStream或Reader派生而来的类都含有名为read()的基本方法，用于读取单个字节或者字节数组。同样，任何字OuputStream或Writer派生而来的类都含有名为write()的基本方法，用于写单个字节或自己数组。但是我们不会用到这些方法，它们之所以存在是因为别的类可以使用它们，以便提供更有用的接口。因此，我们很少使用单一的类来创建流对象，而是通过叠合多个对象来提供所期望的功能。</li>
-<li>实际上，Java中“流”类库让人迷惑的主要原因就在于：创建单一的结果流，却需要创建多个对象。</li>
-<li>System.setIn(InputStream)可以对标准输入重定向，System.setOut(PrintStream),System.setErr(PrintStream)是对标准输出和错误I/O流进行重定向。</li>
-<li>要序列化一个对象，首先要创建某些OutputStream对象，然后将其封装在一个ObjectOutputStream对象内。这时，只需要调用writeObject()即可将对象序列化，并将其发送给OutputStream(对象序列化是基于字节的，因此要使用InputStream和OutputStream继承层次结构)。要反向进行该过程(即将一个序列还原为一个对象)，需要将一个InputStream封装在ObjectInputStream内，然后调用readObject()。我们最后获得的是一个引用，它指向一个向上转型的Object，所以必须向下转型才能直接设置它们。
-        
-          <a class="article-more-a" href="/2017/03/20/Java编程思想读书笔记4/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/20/Java编程思想读书笔记4/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Java编程思想读书笔记3" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/19/Java编程思想读书笔记3/">《Java编程思想》读书笔记——3</a>
-    </h1>
-  
-
-        
-        <a href="/2017/03/19/Java编程思想读书笔记3/" class="archive-article-date">
-  	<time datetime="2017-03-19T10:26:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="《Java编程思想》第10章——内部类"><a href="#《Java编程思想》第10章——内部类" class="headerlink" title="《Java编程思想》第10章——内部类"></a>《Java编程思想》第10章——内部类</h2><ol>
-<li>在拥有外部类对象之前是不可能创建内部类对象的。这是因为内部类对象会暗暗地连接到创建它的外部类对象上。</li>
-<li>接口的所有成员自动被设置为public。</li>
-<li>匿名类不可能有构造器。</li>
-</ol>
-<h2 id="《Java编程思想》第11章——持有对象"><a href="#《Java编程思想》第11章——持有对象" class="headerlink" title="《Java编程思想》第11章——持有对象"></a>《Java编程思想》第11章——持有对象</h2><ol>
-<li>如果一个类没有显式地声明继承自哪个类，那么它自动地继承自Object。</li>
-<li>通过使用泛型，就可以在编译期防止将错误类型的对象放置到容器中。</li>
-<li>你可以将Apple的子类型添加到被指定为保存Apple对象的容器中。</li>
-<li>你可以直接使用Arrays.asList()的输出，将其当作List，但是在这种情况下，其底层表示的是数组，因此不能调整尺寸。</li>
-<li>基本的ArrayList，长于随机访问元素，但是在List的中间插入和移除元素时较慢。LinkedList在List中间进行插入和删除的操作代价较低，并提供了优化的顺序访问，但在随机访问方面相对比较慢。</li>
-<li>subList()所产生的列表的幕后就是初始化列表，因此，对所返回的列表进行修改，会直接反映到原初始列表中，反之亦然。
-        
-          <a class="article-more-a" href="/2017/03/19/Java编程思想读书笔记3/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/19/Java编程思想读书笔记3/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -945,11 +933,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
+                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
               </li>
              
               <li class="article-tag-list-item">

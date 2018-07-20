@@ -6,22 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>SparkStreaming实践总结 | AlbertLee的博客</title>
+  <title>《统计学习方法3——K近邻法》 | AlbertLee的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1. 写在前面上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密">
-<meta name="keywords" content="Spark">
+  <meta name="description" content="1. K近邻法概念与算法 K近邻法假设给定一个训练数据集，其中的实例类别已定。分类时，对新的实例，根据其K个最近邻的训练实例的类别，通过多数表决等方式进行预测。  K近邻法不具有显示的学习过程，主要利用训练数据集对特征向量空间进行划分，并作为其分类的模型。  K值的选择、距离度量及分类决策规则是K近邻法的三个基本要素。  K值的选择：K较小时，训练误差较小，但估计误差较大，即K值的减小意味着整体模">
+<meta name="keywords" content="ML">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SparkStreaming实践总结">
-<meta property="og:url" content="http://yoursite.com/2017/12/08/SparkStreaming实践总结/index.html">
+<meta property="og:title" content="《统计学习方法3——K近邻法》">
+<meta property="og:url" content="http://yoursite.com/2018/07/18/《统计学习方法3——K近邻法》/index.html">
 <meta property="og:site_name" content="AlbertLee的博客">
-<meta property="og:description" content="1. 写在前面上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密">
+<meta property="og:description" content="1. K近邻法概念与算法 K近邻法假设给定一个训练数据集，其中的实例类别已定。分类时，对新的实例，根据其K个最近邻的训练实例的类别，通过多数表决等方式进行预测。  K近邻法不具有显示的学习过程，主要利用训练数据集对特征向量空间进行划分，并作为其分类的模型。  K值的选择、距离度量及分类决策规则是K近邻法的三个基本要素。  K值的选择：K较小时，训练误差较小，但估计误差较大，即K值的减小意味着整体模">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/Kafka%20High%20Level.png">
-<meta property="og:updated_time" content="2018-07-14T11:27:19.646Z">
+<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/KD%E6%A0%91%E6%90%9C%E7%B4%A2.png">
+<meta property="og:updated_time" content="2018-07-19T05:28:03.931Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SparkStreaming实践总结">
-<meta name="twitter:description" content="1. 写在前面上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密">
-<meta name="twitter:image" content="http://ojr3dihlp.bkt.clouddn.com/Kafka%20High%20Level.png">
+<meta name="twitter:title" content="《统计学习方法3——K近邻法》">
+<meta name="twitter:description" content="1. K近邻法概念与算法 K近邻法假设给定一个训练数据集，其中的实例类别已定。分类时，对新的实例，根据其K个最近邻的训练实例的类别，通过多数表决等方式进行预测。  K近邻法不具有显示的学习过程，主要利用训练数据集对特征向量空间进行划分，并作为其分类的模型。  K值的选择、距离度量及分类决策规则是K近邻法的三个基本要素。  K值的选择：K较小时，训练误差较小，但估计误差较大，即K值的减小意味着整体模">
+<meta name="twitter:image" content="http://ojr3dihlp.bkt.clouddn.com/KD%E6%A0%91%E6%90%9C%E7%B4%A2.png">
   
     <link rel="alternative" href="/atom.xml" title="AlbertLee的博客" type="application/atom+xml">
   
@@ -161,50 +161,52 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-SparkStreaming实践总结" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-《统计学习方法3——K近邻法》" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      SparkStreaming实践总结
+      《统计学习方法3——K近邻法》
     </h1>
   
 
         
-        <a href="/2017/12/08/SparkStreaming实践总结/" class="archive-article-date">
-  	<time datetime="2017-12-08T06:13:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-08</time>
+        <a href="/2018/07/18/《统计学习方法3——K近邻法》/" class="archive-article-date">
+  	<time datetime="2018-07-18T15:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-18</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-写在前面"><a href="#1-写在前面" class="headerlink" title="1. 写在前面"></a>1. 写在前面</h2><p>上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密起见，文中代码都是网上找的一些示例代码，不涉及项目实际代码。</p>
-<h2 id="2-SparkStreaming读取Kafka数据"><a href="#2-SparkStreaming读取Kafka数据" class="headerlink" title="2. SparkStreaming读取Kafka数据"></a>2. SparkStreaming读取Kafka数据</h2><h3 id="2-1-Kafka-High-Level-Consumer方式"><a href="#2-1-Kafka-High-Level-Consumer方式" class="headerlink" title="2.1 Kafka High Level Consumer方式"></a>2.1 Kafka High Level Consumer方式</h3><p><img src="http://ojr3dihlp.bkt.clouddn.com/Kafka%20High%20Level.png" alt=""><br><a id="more"></a><br>从Kafka读取数据有两种方式，第一种方式是使用High Level Consumer API接口，该接口中除了有Kafka Topic的概念，还包含Consumer Group的概念，每个Topic的每个Group的Offset都保存在Zookeeper，由ZK负责管理Offset。用户通过访问Zookeeper来获得Offset，从而进行数据读取，该模式下可以实现数据的广播分发和单次分发等功能。该模式的优势在于Offset交由Zookeeper管理，用户代码实现简单，只需设置好Topic和Group（若Group不存在，Zookeeper会自动新建），与Zookeeper通讯即可，不需要关系Offset。缺点在于容易导致数据丢失或数据重复问题。同时需要注意的是，同一个Topic和Group的每个Partion中数据只能由一个Consumer消费，Kafka针对这个问题有一个Consumer Rebalance功能，可以根据Cousmer与Partion的数量关系，进行不同的数据分配机制，具体可以在网上查询相关资料。</p>
-<h3 id="2-2-Kafka-Low-Level-Consumer方式"><a href="#2-2-Kafka-Low-Level-Consumer方式" class="headerlink" title="2.2 Kafka Low Level Consumer方式"></a>2.2 Kafka Low Level Consumer方式</h3><p>从Kafka读取数据的第二种方式为使用Low Level Consumer API，虽然是Low Level，但该API赋予了用户更多的权限，用户直接管理Topic的Offset，不存在Group的概念。由于Kafka不会删除数据，所有该方式下的优势即为读取效率更高，不会出现数据丢失和重复的问题，缺点是需要用户代码完成Topic Offset的管理与备份，实现较为麻烦。</p>
-<h3 id="2-3-SparkStreaming-读取Kafka数据"><a href="#2-3-SparkStreaming-读取Kafka数据" class="headerlink" title="2.3 SparkStreaming 读取Kafka数据"></a>2.3 SparkStreaming 读取Kafka数据</h3><p>SparkStreaming读取Kafka数据也根据High Level和Low Level提供了两种读取方式。<br>Receiver-based Approach采用High Level，只需指定Zookeeper Quorum、Group以及Map(topic-&gt;consumerNum)即可，该方式优点是实现简单方便，可以实现At Least Once，SparkStreaming会有多个Receiver作为Consumer消费Kafka Topic中数据，并将数据放入Executor内存中，SparkStreaming的Partion与Kafka的Partion无关，不存在对应关系。该方式的缺点是为了保证数据不会在SparkStreaming异常时丢失，需要启动SparkStreaming的CheckoutPoint机制，即WAL机制，这样会造成数据在Kafka和Spark出现重复保存，浪费磁盘空间，同时读取效率也会降低。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.streaming.kafka._</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> kafkaStream = <span class="type">KafkaUtils</span>.createStream(streamingContext, </span><br><span class="line">    [<span class="type">ZK</span> quorum], [consumer group id], [per-topic number of <span class="type">Kafka</span> partitions to consume])</span><br></pre></td></tr></table></figure></p>
-<p>Direct Approach采用Low Level，该方式下SparkStreaming的Partion与Kafak的Partion一一对应，SparkStreaming读取数据效率会非常快，且SparkStreaming自主管理Kafka的Offset，可以实现Exactly-once。但为了保证SparkStreaming在异常时不会丢失内存中的Kafka Offset，需要用户自己实现Offset的容错，常见的是用户将Offset同步到Zookeeper中备份。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.streaming.kafka._</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> directKafkaStream = <span class="type">KafkaUtils</span>.createDirectStream[</span><br><span class="line">    [key <span class="class"><span class="keyword">class</span>], [value class], [key decoder class], [value decoder class] ](<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">    streamingContext, [map of <span class="type">Kafka</span> parameters], [set of topics to consume]</span>)</span></span><br></pre></td></tr></table></figure></p>
-<p>本项目中，由于数据量较小，同时考虑到实现的简便性，我们采用了SparkStreaming Receiver-based Approach方式，并添加了CheckoutPoint机制，用户可以通过配置文件conf.properties选择是否开启CheckoutPoint机制。</p>
-<h2 id="3-SparkStreaming-CheckoutPoint机制"><a href="#3-SparkStreaming-CheckoutPoint机制" class="headerlink" title="3. SparkStreaming CheckoutPoint机制"></a>3. SparkStreaming CheckoutPoint机制</h2><p>SparkStreaming的CheckoutPoint机制是为了保证数据不丢失将Streaming中每批RDD的数据保存到HDFS中，当该批次RDD处理完成后再从HDFS中删除的机制，类似WAL机制。因此CheckoutPoint机制需要在创建StreamingContext时调用 StreamingContext.getOrCreate(path,creatingFunc)方法，该方法在Driver程序启动并创建StreamingContext时首先从指定的HDFS路径中判断是否存在备份数据，若存在则从备份数据中重启StreamingContext，若不存在则新建StreamingContext。因此再使用CheckoutPoint时务必设置好HDFS的文件路径，否则程序会报异常。<br>另一方面，Yarn集群中默认Application失败重启的次数为2，所以SparkStreaming再失败从CheckoutPoint重启时，只能重启一次，为了增加重启次数，需要修改Yarn的配置<code>mapreduce.am.max-attempts</code>MR ApplicationMaster最大失败尝试次数，默认为2，我们可以根据实际情况增大该参数。</p>
-<h2 id="4-SparkStreaming-对象序列化问题"><a href="#4-SparkStreaming-对象序列化问题" class="headerlink" title="4. SparkStreaming 对象序列化问题"></a>4. SparkStreaming 对象序列化问题</h2><p>在SparkStreaming程序中我们使用到了JDBC连接池以及Logger日志打印等功能，Spark官网中建议对JDBC连接池实例进行lazy懒惰创建处理，而且实际应用中Logger的实例也需要加入@transient注解，确保Logger在序列化时不会被序列化。<br>针对这个问题，我的猜想是若程序中，未在Drvier中使用而是在分布式算子中使用了JDBC连接池，则为了保证JDBC不会在Drvier实例化，需要在分布式算子中对JDBC连接池实例化代码加入lazy关键字，保证每个Executor中新建一个JDBC连接池实例。<br>Logger由于我们在Driver和分布式算子中都使用到了，因此Drvier会将进程中的Driver的Logger对象进行序列化，并传输给各Executors，然而Logger是无法序列化的，程序会出错。解决方法就是在Logger字段中加入@transient注解，指明该字段在序列化时不进行序列化。这样即使在Driver中使用实例化Logger对象，在序列化时Logger对象也不会序列化进去，Executors中仍然会新建一个Logger对象。<br>序列化问题的根本原因是：在使用到分布式算子时，Diver会将进程内存中的对象序列化并传输到各Executors中，若有些类无法序列化，则这个序列化过程中会报序列化异常，为了避免该情况的发生，则需要lazy关键字和@transient注解的配合，若类只在Executors中使用，则加入lazy保证只在Executor中实例化即可。若类在Driver和Executors中均被使用，则需要加入@transient注解和lazy关键字，保证该类实例在Executor中新建，而不使用Driver中的实例。<br>分布式计算由于涉及到在各分布式节点中传输数据和程序，因此会出现一系列问题，在实际应用中尤其要注意这点。</p>
-<h2 id="5-Spark在Yarn集群的内存分配问题"><a href="#5-Spark在Yarn集群的内存分配问题" class="headerlink" title="5. Spark在Yarn集群的内存分配问题"></a>5. Spark在Yarn集群的内存分配问题</h2><p>当我们将程序编译成jar包使用spark-submit向Yarn集群提交作业后，在Yarn ResourceManager Web UI上发现，任务所占用的内存远比我们设定的要大，比如我们设定<code>--drvier-memory 1G  --executor-memory 1G --num-executors 2</code>正常来讲，Yarn只需要分配3G内存即可，但Yarn集群实际分配内存为6G，我一度怀疑是自己编写的代码存在Bug，但查询资料发现是Yarn资源分配机制的原因所造成的。<br>在设定完drvier-memory和executor-memory以后，Yarn还需要为driver和每个executor分配额外内存用于运行JVM进程，因此总内存较指定的分配内存要大，同时Yarn集群设置了Container最小分配内存，这就造成了上述明明只需3G，却分配了6G内存的问题。</p>
-<ul>
-<li><code>spark.driver.memory：默认值512m</code></li>
-<li><code>spark.executor.memory：默认值512m</code></li>
-<li><code>spark.yarn.am.memory：默认值512m</code></li>
-<li><code>spark.yarn.executor.memoryOverhead：值为executorMemory * 0.07, with minimum of 384</code></li>
-<li><code>spark.yarn.driver.memoryOverhead：值为driverMemory * 0.07, with minimum of 384</code></li>
-<li><code>spark.yarn.am.memoryOverhead：值为AM memory * 0.07, with minimum of 384</code><br>–executor-memory/spark.executor.memory 控制 executor 的堆的大小，但是 JVM 本身也会占用一定的堆空间，比如内部的 String 或者直接 byte buffer，spark.yarn.XXX.memoryOverhead属性决定向 YARN 请求的每个 executor 或dirver或am 的额外堆内存大小，默认值为 max(384, 0.07 * spark.executor.memory)</li>
-<li><code>yarn.app.mapreduce.am.resource.mb：AM能够申请的最大内存，默认值为1536MB</code></li>
-<li><code>yarn.nodemanager.resource.memory-mb：nodemanager能够申请的最大内存，默认值为8192MB</code></li>
-<li><code>yarn.scheduler.minimum-allocation-mb：调度时一个container能够申请的最小资源，默认值为1024MB</code></li>
-<li><code>yarn.scheduler.maximum-allocation-mb：调度时一个container能够申请的最大资源，默认值为8192MB</code><br>关于这个话题的具体信息可以参考<a href="http://www.voidcn.com/article/p-hvpbfmsm-nq.html" target="_blank" rel="noopener">Spark on Yarn的内存分配问题</a>和<a href="http://blog.javachen.com/2015/06/07/spark-configuration.html" target="_blank" rel="noopener">Spark配置参数</a><h2 id="6-c3p0-JDBC连接-8小时失效问题"><a href="#6-c3p0-JDBC连接-8小时失效问题" class="headerlink" title="6. c3p0 JDBC连接 8小时失效问题"></a>6. c3p0 JDBC连接 8小时失效问题</h2>该项目中需要在SparkStreaming程序中将数据写入Mysql，采用了c3p0 JDBC连接池的方式。一开始由于测试数据较少，一天都可能没有一条数据，所以出现了JDBC连接池中的Connection连接在第二天失效的问题，即使用前一天建立的Connection向Mysql写入数据时报出异常，提示连接失效。上网查询资料后发现这是Mysql的连接8小时自动失效导致的问题。只需对c3p0稍加配置即可。</li>
-<li><code>idleConnectionTestPeriod = 3600</code> 每60秒检查所有连接池中的空闲连接</li>
-<li><code>testConnectionOnCheckout = false</code> 因性能消耗大请只在需要的时候使用它。如果设为true那么在每个connection提交的时候都将校验其有效性。建议使用idleConnectionTestPeriod或automaticTestTable等方法来提升连接测试的性能。</li>
-<li><code>testConnectionOnCheckin = true</code>如果设为true那么在取得连接的同时将校验连接的有效性。Default: false<br>关于c3p0详细配置可以参考<a href="http://www.blogjava.net/Alpha/archive/2009/03/29/262789.html" target="_blank" rel="noopener">c3p0详细配置</a><h2 id="7-总结"><a href="#7-总结" class="headerlink" title="7.总结"></a>7.总结</h2>通过这个项目，更加体会到了只看书学理论是远远不能掌握所有要点的，且容易忘记，只有结合项目实践，从实践中体会书中所提到的理论知识，才能真正的将知识点化为自身内在的东西。</li>
+        <h2 id="1-K近邻法概念与算法"><a href="#1-K近邻法概念与算法" class="headerlink" title="1. K近邻法概念与算法"></a>1. K近邻法概念与算法</h2><ul>
+<li><p>K近邻法假设给定一个训练数据集，其中的实例类别已定。分类时，对新的实例，根据其K个最近邻的训练实例的类别，通过多数表决等方式进行预测。</p>
+</li>
+<li><p>K近邻法不具有显示的学习过程，主要利用训练数据集对特征向量空间进行划分，并作为其分类的模型。</p>
+</li>
+<li><p>K值的选择、距离度量及分类决策规则是K近邻法的三个基本要素。</p>
+</li>
+<li><p>K值的选择：K较小时，训练误差较小，但估计误差较大，即K值的减小意味着整体模型变得复杂，容易过拟合。反之K较大时，训练误差较大，但估计误差较小，意味着整体模型变得简单。在应用中，K值一般取较小的数值，并采用交叉验证法来选取最优的K值。</p>
+<a id="more"></a>
+</li>
+<li><p>距离度量：$x_i，x_j$的$L_p$距离定义为：<br>$$<br>L_p(x_i,x_j)=(\sum_{l=1}^n|x_i^l-x_j^l|)^{\frac{1}{p}}<br>$$<br>这里$p\geq1$，当$p=2$时，称为欧式距离，当$p=1$时称为曼哈顿距离，当$p=∞$，它是各个坐标距离的最大值。</p>
+</li>
+<li><p>K近邻法中的分类决策往往采用多数表决，其等价于经验风险最小化。</p>
+</li>
+<li><p>实现K近邻法时，主要考虑的问题是如何对训练数据进行快速K近邻搜索。</p>
+</li>
+<li><p>KD树是一种对K维空间中的实例点进行存储以便对其进行快速检索的树形数据结构。KD树是二叉树，表示对K维空间的一个划分。</p>
+</li>
+<li><p>构造KD树：通常，依次选择坐标轴对空间切分，选择训练实例点在选定坐标轴上的中位数为切分点，这样得到的kd树是平衡的。注意，平衡的kd树搜索时的效率未必是最优的。</p>
+</li>
+<li><p>搜索KD树：下面介绍如何利用kd树进行k近邻搜索。可以看到，利用kd树可以省去对大部分数据点的搜索，从而减少搜索的计算量。</p>
+<p><img src="http://ojr3dihlp.bkt.clouddn.com/KD%E6%A0%91%E6%90%9C%E7%B4%A2.png" alt="KD树搜索最近邻"></p>
+<p>包含目标点的叶结点对应包含目标点的最小超矩形区域。以此叶结点的实例点作为当前最近点。目标点的最近邻一定在以目标点为中心并通过当前最近点的超球体的内部。然后返回当前结点的父结点，如果父结点的另一子结点的超矩形区域与超球体相交，那么在相交的区域内寻找与目标点更近的实例点。如果存在这样的点，将此点作为新的当前最近点。算法转到更上一级的父结点，继续上述过程。如果父结点的另一子结点的超矩形区域与超球体不相交，或不存在比当前最近点更近的点，则停止搜索。</p>
+</li>
 </ul>
+<h2 id="2-总结"><a href="#2-总结" class="headerlink" title="2. 总结"></a>2. 总结</h2><p>K近邻方法没有学习的过程，就是根据样本集将假设空间进行区域划分，并对该区域按照多数表决的方法设置类型。当有测试实例时，寻找测试实例对应的最近K个样本实例，并以这K个样本实例中多数的类型为测试实例的类型。</p>
 
       
 
@@ -218,7 +220,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ML</a>
         		</li>
       		
 		</ul>
@@ -274,7 +276,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/12/08/SparkStreaming实践总结/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2018/07/18/《统计学习方法3——K近邻法》/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -288,18 +290,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/12/11/《深入理解JVM虚拟机》阅读总结/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/07/19/《统计学习方法4——朴素贝叶斯法》/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          《深入理解JVM虚拟机》阅读总结
+          《统计学习方法4——朴素贝叶斯法》
         
       </div>
     </a>
   
   
-    <a href="/2017/10/17/Apache Livy介绍/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Apache Livy介绍</div>
+    <a href="/2018/07/16/《统计学习方法2——感知机》/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">《统计学习方法2——感知机》</div>
       <i class="icon-circle-right"></i>
     </a>
   

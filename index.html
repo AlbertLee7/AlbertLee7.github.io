@@ -159,6 +159,288 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-《统计学习方法5——决策树》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/20/《统计学习方法5——决策树》/">《统计学习方法5——决策树》</a>
+    </h1>
+  
+
+        
+        <a href="/2018/07/20/《统计学习方法5——决策树》/" class="archive-article-date">
+  	<time datetime="2018-07-20T14:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-决策树的概念与构建"><a href="#1-决策树的概念与构建" class="headerlink" title="1. 决策树的概念与构建"></a>1. 决策树的概念与构建</h2><ul>
+<li><p>可以将决策树看成一个if-then规则的集合。将决策树转换成if-then规则的过程是这样的：由决策树的根结点到叶结点的每一条路径构建一条规则；路径上内部结点的特征对应着规则的条件，而叶结点的类对应着规则的结论。</p>
+</li>
+<li><p>决策树学习的算法通常是一个递归地选择最优特征，并根据该特征对训练数据进行分割，使得对各个子数据集有一个最好的分类的过程。</p>
+</li>
+<li><p>构建决策树的过程：</p>
+<ol>
+<li><p>开始构建根节点，将所有训练数据都放在根节点；</p>
+</li>
+<li><p>选择一个最优特征，按照这一特征将数据集分割成子集；</p>
+        
+          <a class="article-more-a" href="/2018/07/20/《统计学习方法5——决策树》/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ML</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/07/20/《统计学习方法5——决策树》/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-《统计学习方法4——朴素贝叶斯法》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/19/《统计学习方法4——朴素贝叶斯法》/">《统计学习方法4——朴素贝叶斯法》</a>
+    </h1>
+  
+
+        
+        <a href="/2018/07/19/《统计学习方法4——朴素贝叶斯法》/" class="archive-article-date">
+  	<time datetime="2018-07-19T14:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-朴素贝叶斯法"><a href="#1-朴素贝叶斯法" class="headerlink" title="1. 朴素贝叶斯法"></a>1. 朴素贝叶斯法</h2><ul>
+<li><p>朴素贝叶斯法是基于贝叶斯定理与特征条件独立假设的分类方法。对于给定的训练数据集，首先基于特征条件独立假设学习输入/输出的联合概率分布；然后基于此模型，对给定的输入x，利用贝叶斯定理求出后验概率最大的输出y。</p>
+</li>
+<li><p>朴素贝叶斯法是典型的生成学习方法，由训练数据学习联合概率分布P(X,Y)，然后求得后验概率P(Y|X)。</p>
+</li>
+<li><p>条件独立性假设：<br>$$<br>P(X=x|Y=c_k)=P(X^1=x^1,…X^n=x^n|Y=c_k)=\prod_{j=1}^n P(X^j=x^j|Y=c_k)<br>$$<br>条件独立假设等于是说用于分类的特征在类确定的条件下都是条件独立的。这一假设使朴素贝叶斯法变得简单，但有时会牺牲一定的分类准确率。</p>
+        
+          <a class="article-more-a" href="/2018/07/19/《统计学习方法4——朴素贝叶斯法》/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ML</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/07/19/《统计学习方法4——朴素贝叶斯法》/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-《统计学习方法3——K近邻法》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/18/《统计学习方法3——K近邻法》/">《统计学习方法3——K近邻法》</a>
+    </h1>
+  
+
+        
+        <a href="/2018/07/18/《统计学习方法3——K近邻法》/" class="archive-article-date">
+  	<time datetime="2018-07-18T15:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-K近邻法概念与算法"><a href="#1-K近邻法概念与算法" class="headerlink" title="1. K近邻法概念与算法"></a>1. K近邻法概念与算法</h2><ul>
+<li><p>K近邻法假设给定一个训练数据集，其中的实例类别已定。分类时，对新的实例，根据其K个最近邻的训练实例的类别，通过多数表决等方式进行预测。</p>
+</li>
+<li><p>K近邻法不具有显示的学习过程，主要利用训练数据集对特征向量空间进行划分，并作为其分类的模型。</p>
+</li>
+<li><p>K值的选择、距离度量及分类决策规则是K近邻法的三个基本要素。</p>
+</li>
+<li><p>K值的选择：K较小时，训练误差较小，但估计误差较大，即K值的减小意味着整体模型变得复杂，容易过拟合。反之K较大时，训练误差较大，但估计误差较小，意味着整体模型变得简单。在应用中，K值一般取较小的数值，并采用交叉验证法来选取最优的K值。</p>
+        
+          <a class="article-more-a" href="/2018/07/18/《统计学习方法3——K近邻法》/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ML</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/07/18/《统计学习方法3——K近邻法》/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-《统计学习方法2——感知机》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/16/《统计学习方法2——感知机》/">《统计学习方法2——感知机》</a>
+    </h1>
+  
+
+        
+        <a href="/2018/07/16/《统计学习方法2——感知机》/" class="archive-article-date">
+  	<time datetime="2018-07-16T14:03:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-感知机模型及其学习策略"><a href="#1-感知机模型及其学习策略" class="headerlink" title="1. 感知机模型及其学习策略"></a>1. 感知机模型及其学习策略</h2><ul>
+<li><p><strong>感知机</strong>是二类分类的线性分类模型，其输入为实例的特征向量，输出为实例的类别，取+1和-1二值。其模型函数为：$f(x)=sign(w·x+b)$，其中，$w$为权值向量，$b$为偏置。$sign(x)=\begin{cases}  +1, \geq 0  \ -1, &lt;0\end{cases}$</p>
+</li>
+<li><p>$w·x+b=0$对应特征空间的超平面，$w$是超平面的法向量，$b$是超平面的截距，这个超平面将特征空间划分为两部分。</p>
+</li>
+<li><p>若数据集$T={(x_1,y_1),(x_2,y_2),…(x_i,y_i)}$，$y={+1,-1}$，存在一个超平面$w·x+b=0$，能够将数据集的正实例点和负实例点完全正确的划分到超平面的两侧，即对所有$y_i=+1$，有$w·x+b&gt;0$，对所有$y_i=-1$，有$w·x+b&lt;0$，则称该数据集为线性可分数据集，否则为线性不可分。</p>
+        
+          <a class="article-more-a" href="/2018/07/16/《统计学习方法2——感知机》/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ML</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/07/16/《统计学习方法2——感知机》/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-《统计学习方法1——统计学习方法概论》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -553,267 +835,6 @@
 
 
   
-    <article id="post-HBase系列5——性能优化" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/15/HBase系列5——性能优化/">HBase系列5——性能优化</a>
-    </h1>
-  
-
-        
-        <a href="/2017/10/15/HBase系列5——性能优化/" class="archive-article-date">
-  	<time datetime="2017-10-15T02:43:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>HBase的性能优化主要围绕提升HBase的读写性能围绕，包括Client端程序优化以及HBase服务端参数配置优化。其中，Client端可以从减少RPC调用次数入手，使用缓存，采用批量请求的方式。HBase服务端参数配置优化，又主要包括良好的RowKey设置保证负载均衡，良好的ColumnFamily设置，适当的MemStore Flush配置和Compaction配置以及合理的内存规划等方面。</p>
-<h2 id="1-读性能优化"><a href="#1-读性能优化" class="headerlink" title="1. 读性能优化"></a>1. 读性能优化</h2><p><img src="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%962.png" alt=""></p>
-<h3 id="1-1-Client端"><a href="#1-1-Client端" class="headerlink" title="1.1 Client端"></a>1.1 Client端</h3><h4 id="1-1-1-减少RPC请求次数"><a href="#1-1-1-减少RPC请求次数" class="headerlink" title="1.1.1 减少RPC请求次数"></a>1.1.1 减少RPC请求次数</h4><p>Client端查询程序开发时，针对Get请求，在Client端宕机时允许Get请求丢失一部分的情况下，可以采用批量Get请求的方式，减少RPC请求次数。针对Scan请求，默认会每次从HBase服务端拉取100条数据进行缓存，当Scan的数据量较大时，我们可以增大Caching的条数，每次从HBase服务端拉取1000条数据，从而减少RPC请求次数。<br>
-        
-          <a class="article-more-a" href="/2017/10/15/HBase系列5——性能优化/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/10/15/HBase系列5——性能优化/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-HBase系列4——API介绍与Spark读写HBase" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/">HBase系列4——常用API介绍与Spark读写HBase</a>
-    </h1>
-  
-
-        
-        <a href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/" class="archive-article-date">
-  	<time datetime="2017-10-14T09:34:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-Java-API"><a href="#1-Java-API" class="headerlink" title="1. Java API"></a>1. Java API</h2><p>Java API包括了对HBase的各种操作，本节主要对Java API中的基本操作进行简要介绍，诸如批量处理以及过滤器的使用等高级API，感兴趣的可以进一步了解。Java API中的CRUD主要通过HTable类提供的方法实现，而管理和创建HBase表，则通过HBaseAdmin类实现。</p>
-<h3 id="1-1-Get-操作"><a href="#1-1-Get-操作" class="headerlink" title="1.1 Get 操作"></a>1.1 Get 操作</h3><p>Get操作包括单次Get请求和批量Get请求，我们以单次Get请求为例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Configuration conf = HBaseConfiguration.create();</span><br><span class="line">HTable table = <span class="keyword">new</span> HTable(conf, <span class="string">"testtable"</span>);</span><br><span class="line">Get get = <span class="keyword">new</span> Get(Bytes.toBytes(<span class="string">"row1"</span>));</span><br><span class="line">get.addColumn(Bytes.toBytes(<span class="string">"colfam1"</span>), Bytes.toBytes(<span class="string">"qual1"</span>));</span><br><span class="line">Result result = table.get(get);</span><br><span class="line"><span class="keyword">byte</span>[] val = result.getValue(Bytes.toBytes(<span class="string">"colfam1"</span>), Bytes.toBytes(<span class="string">"qual1"</span>));</span><br><span class="line">table.close();</span><br><span class="line">System.out.println(<span class="string">"Value: "</span> + Bytes.toString(val));</span><br></pre></td></tr></table></figure></p>
-        
-          <a class="article-more-a" href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-HBase系列3——表结构设计" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/13/HBase系列3——表结构设计/">HBase系列3——表结构设计</a>
-    </h1>
-  
-
-        
-        <a href="/2017/10/13/HBase系列3——表结构设计/" class="archive-article-date">
-  	<time datetime="2017-10-13T05:36:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-表结构设计至关重要"><a href="#1-表结构设计至关重要" class="headerlink" title="1. 表结构设计至关重要"></a>1. 表结构设计至关重要</h2><p>在使用HBase的过程中，HBase表结构设计的优劣对读写性能有着较大影响。由于HBase只能对RowKey进行索引，因此若RowKey没有针对具体需求做特殊设计，Client端在Get/Scan数据表时，往往需要遍历Row中的所有数据列，并做一些较为复杂的逻辑处理，才能得到所需数据，读写性能较差。RowKey的设计还需要考虑到HBase的RowKey采用从小到大字典排序的特点，且RowKey相同的数据会在同一个HRegionServer中，当RowKey相似或存在数据热点时，大量的数据会存储在同一个HRegionServer中，对数据读写时会存在单点性能瓶颈，无法发挥HBase分布式存储的优势。ColumnFamily数量、数据的压缩方式、数据版本数、数据时间周期TTL以及二级索引表等，对HBase的性能也有着重要影响，这些参数在进行HBase表结构设计时，都需要着重考虑，只有全面考虑才能最大发挥HBase的性能优势。</p>
-<h2 id="2-建表示例"><a href="#2-建表示例" class="headerlink" title="2. 建表示例"></a>2. 建表示例</h2><p><code>create &#39;TestTable&#39;, {NAME=&gt;&#39;CF1&#39;, BLOOMFILTER=&gt;&#39;ROW&#39;, BLOCKSIZE=&gt;&#39;65536&#39;, VERSIONS=&gt;&#39;3&#39;, COMPRESSION=&gt;&#39;SNAPPY&#39;, BLOCKCACHE=&gt;&#39;true&#39;, IN_MEMORY=&gt;&#39;false&#39;, TTL=&gt;&#39;3600&#39;}</code><br>以上建表语句，表示建立一个名为TestTable的表，只有一个名为CF1的列簇，该列簇中BLOOMFILTER为ROW方式，HFile数据块大小为65536B(64KB)，版本数为3，数据采用SNAPPY的压缩方式，BLOCKCACHE为true(默认)，IN_MEMORY为false(默认)<br>， 数据存储周期为3600s。建表语句中具体参数含义会下面会具体解释。<br>
-        
-          <a class="article-more-a" href="/2017/10/13/HBase系列3——表结构设计/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/10/13/HBase系列3——表结构设计/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-HBase系列2——读写流程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/12/HBase系列2——读写流程/">HBase系列2——读写流程</a>
-    </h1>
-  
-
-        
-        <a href="/2017/10/12/HBase系列2——读写流程/" class="archive-article-date">
-  	<time datetime="2017-10-12T07:06:35.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-HBase写入流程"><a href="#1-HBase写入流程" class="headerlink" title="1. HBase写入流程"></a>1. HBase写入流程</h2><p>  HBase写入流程主要分为四部分，分别为Client端写入、写入HLog日志、写入MemStore、MemStore溢出到HFile落地磁盘</p>
-<h3 id="1-1-Client端"><a href="#1-1-Client端" class="headerlink" title="1.1 Client端"></a>1.1 Client端</h3><p>用户写入HBase数据时，首先会通过HBase提供的API接口，调用Put类，将数据写入本地缓存，若用户设置的AutoFlush=Ture(默认)，则每调用一次Put操作，Client会将请求立即发送给HBase集群；若用户设置的AutoFlush=False，则每调用一次Put操作，Client会将请求缓存至本地缓存，当缓存达到阈值时(默认2M)，会批量向HBase集群提交Put请求，也可以调优flushcommit()方法强制将缓存中的put请求提交至HBase集群。<br>两种提交方式相比，AutoFlush=False的批量操作数据吞吐量更高，但是由于Put请求都缓存在本地缓存，因此存在数据丢失的风险。<br>上述提及的Put批量提交是通过关闭AutoFlush机制实现的，与使用List<put>这种方法异曲同工，List<put>将多个Put操作放入List中，通过提交List<put>的方法也可以实现批量写入。<br>
-        
-          <a class="article-more-a" href="/2017/10/12/HBase系列2——读写流程/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/10/12/HBase系列2——读写流程/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -936,11 +957,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
+                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
               </li>
              
               <li class="article-tag-list-item">

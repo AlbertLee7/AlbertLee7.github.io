@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="AlbertLee的博客">
 <meta property="og:description" content="1. 机器学习规划做大数据已经有2年多的时间，Spark、HBase、ElasticSearch等大数据组件也在多个项目中进行了应用实践，总想着除了在广度上多接触各类大数据开源组件之外，还应该在深度上多做些研究，因为从早期 MR引擎到Spark引擎再到FLink引擎等，各种工具层次不穷，我不想只是做一个工程开发人员，我想做数据分析方面的专家，沿着大数据应用—&amp;gt;机器学习—&amp;gt;深度学习的路线">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-07-15T12:20:16.367Z">
+<meta property="og:updated_time" content="2018-07-15T12:26:21.212Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《统计学习方法1——统计学习方法概论》">
 <meta name="twitter:description" content="1. 机器学习规划做大数据已经有2年多的时间，Spark、HBase、ElasticSearch等大数据组件也在多个项目中进行了应用实践，总想着除了在广度上多接触各类大数据开源组件之外，还应该在深度上多做些研究，因为从早期 MR引擎到Spark引擎再到FLink引擎等，各种工具层次不穷，我不想只是做一个工程开发人员，我想做数据分析方面的专家，沿着大数据应用—&amp;gt;机器学习—&amp;gt;深度学习的路线">
@@ -203,14 +203,14 @@
 </li>
 <li><p><strong>损失函数/代价函数：</strong>表征预测值f(X)与真实值Y的误差。损失函数是f(X)与Y的非负实值函数，记作<strong>L(Y, f(x))</strong>，常用的有0-1损失函数、平方损失函数、绝对损失函数和对数损失函数。</p>
 </li>
-<li><p><strong>经验风险：</strong>学习的目标就是选择期望风险最小的模型，期望风险与联合分布有关，不能直径计算，实际中我们往往使用经验风险来代替期望风险。经验风险最小化(ERM)认为，经验风险最小的模型是最优的模型<br>$$<br>R_{emp}(f)=\frac{1}{N}\sum_{i=1}^NL(y_i,f(x_i))—\text{【经验风险/经验损失】}<br>$$</p>
+<li><p><strong>经验风险：</strong>学习的目标就是选择期望风险最小的模型，期望风险与联合分布有关，不能直径计算，实际中我们往往使用经验风险来代替期望风险。经验风险最小化(ERM)认为，经验风险最小的模型是最优的模型<br>$$<br>R_{emp}(f)=\frac{1}{N}\sum_{i=1}^NL(y_i,f(x_i))<br>$$</p>
 </li>
 <li><p><strong>极大似然估计</strong>就是经验风险最小化的一个例子。当模型是条件概率分布，损失函数是对数损失函数时，经验风险最小化就等价于极大似然函数估计。</p>
 </li>
 <li><p><strong>结构风险：</strong>当样本容量很小使，经验风险最小化策略选取的最优模型，由于<strong>过拟合问题</strong>，测试误差往往较大。结构化风险最小化是为了防止过拟合而提出的策略。结构风险最小化等价于正则化。</p>
 </li>
 </ol>
-<p>$$<br>R_{srm}(f)=\frac{1}{N}\sum_{i=1}^NL(y_i,f(x_i)) +\lambda J(f) —\text{【结构风险】}<br>$$</p>
+<p>$$<br>R_{srm}(f)=\frac{1}{N}\sum_{i=1}^NL(y_i,f(x_i)) +\lambda J(f)<br>$$</p>
 <p>​    其中$J(f)$为模型复杂度，模型$f$越复杂，复杂度$J(f)$就越大，反之亦然。复杂度表示了对模型的惩罚。$\lambda&gt;=0$是系数，用以权衡经验风险和模型复杂度。结构化风险小的模型往往对训练数据和未知的测试数据都有较好的预测。</p>
 <ol start="15">
 <li>贝叶斯估计中最大后验概率估计就是结构化风险最小化的例子。当模型是条件概率分布，损失函数是对数损失函数，模型复杂度由模型的先验概率表示时，结构风险最小化就等价于最大后验概估计。</li>
@@ -313,6 +313,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2018/07/16/《统计学习方法2——感知机》/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          《统计学习方法2——感知机》
+        
+      </div>
+    </a>
   
   
     <a href="/2018/07/14/Spark读写HBase性能问题及解决方案/" id="article-nav-older" class="article-nav-link-wrap">
@@ -465,11 +474,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
+                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
               </li>
              
               <li class="article-tag-list-item">

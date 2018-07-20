@@ -6,22 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>SparkStreaming实践总结 | AlbertLee的博客</title>
+  <title>《统计学习方法5——决策树》 | AlbertLee的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1. 写在前面上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密">
-<meta name="keywords" content="Spark">
+  <meta name="description" content="1. 决策树的概念与构建 可以将决策树看成一个if-then规则的集合。将决策树转换成if-then规则的过程是这样的：由决策树的根结点到叶结点的每一条路径构建一条规则；路径上内部结点的特征对应着规则的条件，而叶结点的类对应着规则的结论。  决策树学习的算法通常是一个递归地选择最优特征，并根据该特征对训练数据进行分割，使得对各个子数据集有一个最好的分类的过程。  构建决策树的过程：  开始构建根节">
+<meta name="keywords" content="ML">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SparkStreaming实践总结">
-<meta property="og:url" content="http://yoursite.com/2017/12/08/SparkStreaming实践总结/index.html">
+<meta property="og:title" content="《统计学习方法5——决策树》">
+<meta property="og:url" content="http://yoursite.com/2018/07/20/《统计学习方法5——决策树》/index.html">
 <meta property="og:site_name" content="AlbertLee的博客">
-<meta property="og:description" content="1. 写在前面上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密">
+<meta property="og:description" content="1. 决策树的概念与构建 可以将决策树看成一个if-then规则的集合。将决策树转换成if-then规则的过程是这样的：由决策树的根结点到叶结点的每一条路径构建一条规则；路径上内部结点的特征对应着规则的条件，而叶结点的类对应着规则的结论。  决策树学习的算法通常是一个递归地选择最优特征，并根据该特征对训练数据进行分割，使得对各个子数据集有一个最好的分类的过程。  构建决策树的过程：  开始构建根节">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/Kafka%20High%20Level.png">
-<meta property="og:updated_time" content="2018-07-14T11:27:19.646Z">
+<meta property="og:updated_time" content="2018-07-20T05:35:27.948Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SparkStreaming实践总结">
-<meta name="twitter:description" content="1. 写在前面上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密">
-<meta name="twitter:image" content="http://ojr3dihlp.bkt.clouddn.com/Kafka%20High%20Level.png">
+<meta name="twitter:title" content="《统计学习方法5——决策树》">
+<meta name="twitter:description" content="1. 决策树的概念与构建 可以将决策树看成一个if-then规则的集合。将决策树转换成if-then规则的过程是这样的：由决策树的根结点到叶结点的每一条路径构建一条规则；路径上内部结点的特征对应着规则的条件，而叶结点的类对应着规则的结论。  决策树学习的算法通常是一个递归地选择最优特征，并根据该特征对训练数据进行分割，使得对各个子数据集有一个最好的分类的过程。  构建决策树的过程：  开始构建根节">
   
     <link rel="alternative" href="/atom.xml" title="AlbertLee的博客" type="application/atom+xml">
   
@@ -161,50 +159,118 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-SparkStreaming实践总结" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-《统计学习方法5——决策树》" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      SparkStreaming实践总结
+      《统计学习方法5——决策树》
     </h1>
   
 
         
-        <a href="/2017/12/08/SparkStreaming实践总结/" class="archive-article-date">
-  	<time datetime="2017-12-08T06:13:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-08</time>
+        <a href="/2018/07/20/《统计学习方法5——决策树》/" class="archive-article-date">
+  	<time datetime="2018-07-20T14:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-20</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="1-写在前面"><a href="#1-写在前面" class="headerlink" title="1. 写在前面"></a>1. 写在前面</h2><p>上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密起见，文中代码都是网上找的一些示例代码，不涉及项目实际代码。</p>
-<h2 id="2-SparkStreaming读取Kafka数据"><a href="#2-SparkStreaming读取Kafka数据" class="headerlink" title="2. SparkStreaming读取Kafka数据"></a>2. SparkStreaming读取Kafka数据</h2><h3 id="2-1-Kafka-High-Level-Consumer方式"><a href="#2-1-Kafka-High-Level-Consumer方式" class="headerlink" title="2.1 Kafka High Level Consumer方式"></a>2.1 Kafka High Level Consumer方式</h3><p><img src="http://ojr3dihlp.bkt.clouddn.com/Kafka%20High%20Level.png" alt=""><br><a id="more"></a><br>从Kafka读取数据有两种方式，第一种方式是使用High Level Consumer API接口，该接口中除了有Kafka Topic的概念，还包含Consumer Group的概念，每个Topic的每个Group的Offset都保存在Zookeeper，由ZK负责管理Offset。用户通过访问Zookeeper来获得Offset，从而进行数据读取，该模式下可以实现数据的广播分发和单次分发等功能。该模式的优势在于Offset交由Zookeeper管理，用户代码实现简单，只需设置好Topic和Group（若Group不存在，Zookeeper会自动新建），与Zookeeper通讯即可，不需要关系Offset。缺点在于容易导致数据丢失或数据重复问题。同时需要注意的是，同一个Topic和Group的每个Partion中数据只能由一个Consumer消费，Kafka针对这个问题有一个Consumer Rebalance功能，可以根据Cousmer与Partion的数量关系，进行不同的数据分配机制，具体可以在网上查询相关资料。</p>
-<h3 id="2-2-Kafka-Low-Level-Consumer方式"><a href="#2-2-Kafka-Low-Level-Consumer方式" class="headerlink" title="2.2 Kafka Low Level Consumer方式"></a>2.2 Kafka Low Level Consumer方式</h3><p>从Kafka读取数据的第二种方式为使用Low Level Consumer API，虽然是Low Level，但该API赋予了用户更多的权限，用户直接管理Topic的Offset，不存在Group的概念。由于Kafka不会删除数据，所有该方式下的优势即为读取效率更高，不会出现数据丢失和重复的问题，缺点是需要用户代码完成Topic Offset的管理与备份，实现较为麻烦。</p>
-<h3 id="2-3-SparkStreaming-读取Kafka数据"><a href="#2-3-SparkStreaming-读取Kafka数据" class="headerlink" title="2.3 SparkStreaming 读取Kafka数据"></a>2.3 SparkStreaming 读取Kafka数据</h3><p>SparkStreaming读取Kafka数据也根据High Level和Low Level提供了两种读取方式。<br>Receiver-based Approach采用High Level，只需指定Zookeeper Quorum、Group以及Map(topic-&gt;consumerNum)即可，该方式优点是实现简单方便，可以实现At Least Once，SparkStreaming会有多个Receiver作为Consumer消费Kafka Topic中数据，并将数据放入Executor内存中，SparkStreaming的Partion与Kafka的Partion无关，不存在对应关系。该方式的缺点是为了保证数据不会在SparkStreaming异常时丢失，需要启动SparkStreaming的CheckoutPoint机制，即WAL机制，这样会造成数据在Kafka和Spark出现重复保存，浪费磁盘空间，同时读取效率也会降低。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.streaming.kafka._</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> kafkaStream = <span class="type">KafkaUtils</span>.createStream(streamingContext, </span><br><span class="line">    [<span class="type">ZK</span> quorum], [consumer group id], [per-topic number of <span class="type">Kafka</span> partitions to consume])</span><br></pre></td></tr></table></figure></p>
-<p>Direct Approach采用Low Level，该方式下SparkStreaming的Partion与Kafak的Partion一一对应，SparkStreaming读取数据效率会非常快，且SparkStreaming自主管理Kafka的Offset，可以实现Exactly-once。但为了保证SparkStreaming在异常时不会丢失内存中的Kafka Offset，需要用户自己实现Offset的容错，常见的是用户将Offset同步到Zookeeper中备份。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.streaming.kafka._</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> directKafkaStream = <span class="type">KafkaUtils</span>.createDirectStream[</span><br><span class="line">    [key <span class="class"><span class="keyword">class</span>], [value class], [key decoder class], [value decoder class] ](<span class="params"></span></span></span><br><span class="line"><span class="class"><span class="params">    streamingContext, [map of <span class="type">Kafka</span> parameters], [set of topics to consume]</span>)</span></span><br></pre></td></tr></table></figure></p>
-<p>本项目中，由于数据量较小，同时考虑到实现的简便性，我们采用了SparkStreaming Receiver-based Approach方式，并添加了CheckoutPoint机制，用户可以通过配置文件conf.properties选择是否开启CheckoutPoint机制。</p>
-<h2 id="3-SparkStreaming-CheckoutPoint机制"><a href="#3-SparkStreaming-CheckoutPoint机制" class="headerlink" title="3. SparkStreaming CheckoutPoint机制"></a>3. SparkStreaming CheckoutPoint机制</h2><p>SparkStreaming的CheckoutPoint机制是为了保证数据不丢失将Streaming中每批RDD的数据保存到HDFS中，当该批次RDD处理完成后再从HDFS中删除的机制，类似WAL机制。因此CheckoutPoint机制需要在创建StreamingContext时调用 StreamingContext.getOrCreate(path,creatingFunc)方法，该方法在Driver程序启动并创建StreamingContext时首先从指定的HDFS路径中判断是否存在备份数据，若存在则从备份数据中重启StreamingContext，若不存在则新建StreamingContext。因此再使用CheckoutPoint时务必设置好HDFS的文件路径，否则程序会报异常。<br>另一方面，Yarn集群中默认Application失败重启的次数为2，所以SparkStreaming再失败从CheckoutPoint重启时，只能重启一次，为了增加重启次数，需要修改Yarn的配置<code>mapreduce.am.max-attempts</code>MR ApplicationMaster最大失败尝试次数，默认为2，我们可以根据实际情况增大该参数。</p>
-<h2 id="4-SparkStreaming-对象序列化问题"><a href="#4-SparkStreaming-对象序列化问题" class="headerlink" title="4. SparkStreaming 对象序列化问题"></a>4. SparkStreaming 对象序列化问题</h2><p>在SparkStreaming程序中我们使用到了JDBC连接池以及Logger日志打印等功能，Spark官网中建议对JDBC连接池实例进行lazy懒惰创建处理，而且实际应用中Logger的实例也需要加入@transient注解，确保Logger在序列化时不会被序列化。<br>针对这个问题，我的猜想是若程序中，未在Drvier中使用而是在分布式算子中使用了JDBC连接池，则为了保证JDBC不会在Drvier实例化，需要在分布式算子中对JDBC连接池实例化代码加入lazy关键字，保证每个Executor中新建一个JDBC连接池实例。<br>Logger由于我们在Driver和分布式算子中都使用到了，因此Drvier会将进程中的Driver的Logger对象进行序列化，并传输给各Executors，然而Logger是无法序列化的，程序会出错。解决方法就是在Logger字段中加入@transient注解，指明该字段在序列化时不进行序列化。这样即使在Driver中使用实例化Logger对象，在序列化时Logger对象也不会序列化进去，Executors中仍然会新建一个Logger对象。<br>序列化问题的根本原因是：在使用到分布式算子时，Diver会将进程内存中的对象序列化并传输到各Executors中，若有些类无法序列化，则这个序列化过程中会报序列化异常，为了避免该情况的发生，则需要lazy关键字和@transient注解的配合，若类只在Executors中使用，则加入lazy保证只在Executor中实例化即可。若类在Driver和Executors中均被使用，则需要加入@transient注解和lazy关键字，保证该类实例在Executor中新建，而不使用Driver中的实例。<br>分布式计算由于涉及到在各分布式节点中传输数据和程序，因此会出现一系列问题，在实际应用中尤其要注意这点。</p>
-<h2 id="5-Spark在Yarn集群的内存分配问题"><a href="#5-Spark在Yarn集群的内存分配问题" class="headerlink" title="5. Spark在Yarn集群的内存分配问题"></a>5. Spark在Yarn集群的内存分配问题</h2><p>当我们将程序编译成jar包使用spark-submit向Yarn集群提交作业后，在Yarn ResourceManager Web UI上发现，任务所占用的内存远比我们设定的要大，比如我们设定<code>--drvier-memory 1G  --executor-memory 1G --num-executors 2</code>正常来讲，Yarn只需要分配3G内存即可，但Yarn集群实际分配内存为6G，我一度怀疑是自己编写的代码存在Bug，但查询资料发现是Yarn资源分配机制的原因所造成的。<br>在设定完drvier-memory和executor-memory以后，Yarn还需要为driver和每个executor分配额外内存用于运行JVM进程，因此总内存较指定的分配内存要大，同时Yarn集群设置了Container最小分配内存，这就造成了上述明明只需3G，却分配了6G内存的问题。</p>
-<ul>
-<li><code>spark.driver.memory：默认值512m</code></li>
-<li><code>spark.executor.memory：默认值512m</code></li>
-<li><code>spark.yarn.am.memory：默认值512m</code></li>
-<li><code>spark.yarn.executor.memoryOverhead：值为executorMemory * 0.07, with minimum of 384</code></li>
-<li><code>spark.yarn.driver.memoryOverhead：值为driverMemory * 0.07, with minimum of 384</code></li>
-<li><code>spark.yarn.am.memoryOverhead：值为AM memory * 0.07, with minimum of 384</code><br>–executor-memory/spark.executor.memory 控制 executor 的堆的大小，但是 JVM 本身也会占用一定的堆空间，比如内部的 String 或者直接 byte buffer，spark.yarn.XXX.memoryOverhead属性决定向 YARN 请求的每个 executor 或dirver或am 的额外堆内存大小，默认值为 max(384, 0.07 * spark.executor.memory)</li>
-<li><code>yarn.app.mapreduce.am.resource.mb：AM能够申请的最大内存，默认值为1536MB</code></li>
-<li><code>yarn.nodemanager.resource.memory-mb：nodemanager能够申请的最大内存，默认值为8192MB</code></li>
-<li><code>yarn.scheduler.minimum-allocation-mb：调度时一个container能够申请的最小资源，默认值为1024MB</code></li>
-<li><code>yarn.scheduler.maximum-allocation-mb：调度时一个container能够申请的最大资源，默认值为8192MB</code><br>关于这个话题的具体信息可以参考<a href="http://www.voidcn.com/article/p-hvpbfmsm-nq.html" target="_blank" rel="noopener">Spark on Yarn的内存分配问题</a>和<a href="http://blog.javachen.com/2015/06/07/spark-configuration.html" target="_blank" rel="noopener">Spark配置参数</a><h2 id="6-c3p0-JDBC连接-8小时失效问题"><a href="#6-c3p0-JDBC连接-8小时失效问题" class="headerlink" title="6. c3p0 JDBC连接 8小时失效问题"></a>6. c3p0 JDBC连接 8小时失效问题</h2>该项目中需要在SparkStreaming程序中将数据写入Mysql，采用了c3p0 JDBC连接池的方式。一开始由于测试数据较少，一天都可能没有一条数据，所以出现了JDBC连接池中的Connection连接在第二天失效的问题，即使用前一天建立的Connection向Mysql写入数据时报出异常，提示连接失效。上网查询资料后发现这是Mysql的连接8小时自动失效导致的问题。只需对c3p0稍加配置即可。</li>
-<li><code>idleConnectionTestPeriod = 3600</code> 每60秒检查所有连接池中的空闲连接</li>
-<li><code>testConnectionOnCheckout = false</code> 因性能消耗大请只在需要的时候使用它。如果设为true那么在每个connection提交的时候都将校验其有效性。建议使用idleConnectionTestPeriod或automaticTestTable等方法来提升连接测试的性能。</li>
-<li><code>testConnectionOnCheckin = true</code>如果设为true那么在取得连接的同时将校验连接的有效性。Default: false<br>关于c3p0详细配置可以参考<a href="http://www.blogjava.net/Alpha/archive/2009/03/29/262789.html" target="_blank" rel="noopener">c3p0详细配置</a><h2 id="7-总结"><a href="#7-总结" class="headerlink" title="7.总结"></a>7.总结</h2>通过这个项目，更加体会到了只看书学理论是远远不能掌握所有要点的，且容易忘记，只有结合项目实践，从实践中体会书中所提到的理论知识，才能真正的将知识点化为自身内在的东西。</li>
+        <h2 id="1-决策树的概念与构建"><a href="#1-决策树的概念与构建" class="headerlink" title="1. 决策树的概念与构建"></a>1. 决策树的概念与构建</h2><ul>
+<li><p>可以将决策树看成一个if-then规则的集合。将决策树转换成if-then规则的过程是这样的：由决策树的根结点到叶结点的每一条路径构建一条规则；路径上内部结点的特征对应着规则的条件，而叶结点的类对应着规则的结论。</p>
+</li>
+<li><p>决策树学习的算法通常是一个递归地选择最优特征，并根据该特征对训练数据进行分割，使得对各个子数据集有一个最好的分类的过程。</p>
+</li>
+<li><p>构建决策树的过程：</p>
+<ol>
+<li><p>开始构建根节点，将所有训练数据都放在根节点；</p>
+</li>
+<li><p>选择一个最优特征，按照这一特征将数据集分割成子集；</p>
+<a id="more"></a>
+</li>
+<li><p>如果子集已经能够被基本正确分类，则构建叶节点，将子集放到对应的叶子节点中；如果还有子集没有被基本正确分类，则对这些子集从剩余的特征中选择新的最优特征，继续进行分割，构建相应的节点。</p>
+</li>
+<li><p>如此递归的进行2、3步骤，直到所有训练数据子集被基本正确分类，或者没有合适的特征为止。</p>
+</li>
+</ol>
+</li>
+<li><p>决策树的生成只考虑局部最优，相对地，决策树的剪枝则考虑全局最优。</p>
+</li>
+<li><p>特征选择是决定用哪个特征来划分特征空间。特征选择在于选取对训练数据具有分类能力的特征。通常特征选择的准则是信息增益或信息增益比。</p>
+</li>
+<li><p>在信息论与概率统计中，熵是表示随机变量不确定性的度量。设X是一个取有限个值的离散随机变量，其概率分布为：$P(X=x_i)=p_i$，i=1,2,…,n；则随机变量X的熵定义为：<br>$$<br>H(x)=H(p)=-\sum_{i=1}^np_i\log p_i<br>$$<br>熵越大，随机变量的不确定性就越大。式中对数以2为底或以e为底，这时熵的单位分别称作比特(bit)或纳特(nat)。</p>
+</li>
+<li><p>随机变量X给定的条件下，随机变量Y的条件熵H(Y|X)，定义为X给定条件下Y的条件概率分布的熵对X的数学期望：<br>$$<br>H(Y|X)=\sum_{i=1}^np_iH(Y|X=x_i)<br>$$<br>这里$p_i=P(X=x_i)$，i=1,2,..,n</p>
+</li>
+<li><p>当熵和条件熵中的概率由数据估计(特别是极大似然估计)得到时，所对应的熵与条件熵分别称为经验熵和经验条件熵。</p>
+</li>
+<li><p>信息增益：特征A对训练数据集D的信息增益g(D,A)，定义为集合D的经验熵H(D)与特征A给定条件下D的经验条件熵H(D|A)之差：<br>$$<br>g(D,A)=H(D)-H(D|A)<br>$$</p>
+</li>
+<li><p>熵H(Y)与条件熵H(Y|X)之差称为互信息。决策树学习中的信息增益等价于训练数据集中类与特征的互信息。</p>
+</li>
+<li><p>决策树学习应用信息增益准则选择特征。给定训练数据集D和特征A，经验熵H(D)表示对数据集D进行分类的不确定性。而经验条件熵H(D|A)表示在特征A给定的条件下对数据集D进行分类的不确定性。那么它们的差，即信息增益，就表示由于特征A而使得对数据集D的分类的不确定性减少的程度。信息增益大的特征具有更强的分类能力。</p>
+</li>
+<li><p>根据信息增益准则的特征选择方法是：对训练数据集（或子集）D，计算其每个特征的信息增益，并比较它们的大小，选择信息增益最大的特征。</p>
+</li>
+<li><p>数据集D的经验熵H(D)：<br>$$<br>H(D)=-\sum_{k=1}^K\frac{|C_k|}{D}\log_2{\frac{|C_k|}{D}}<br>$$<br>其中，$C_k$为类别。</p>
+</li>
+<li><p>特征A对数据集D的经验条件熵H(D|A)：<br>$$<br>H(D|A)=\sum_{i=1}^n\frac{|D_i|}{|D|}H(D_i)=-\sum_{i=1}^n\frac{|D_i|}{|D|}\sum_{k=1}^K\frac{|D_{ik|}}{|D_i|}\log_2{\frac{|D_{ik|}}{|D_i|}}<br>$$<br>其中$D_i$为根据特征A的取值将D划分为n个对应的子集：$D_1,D_2,…,D_n$ ，  $|D_i|$为对应的样本个数。</p>
+</li>
+<li><p>决策根据信息增益$g(D,A=H(D)-H(D|A)$来选择可以最大限度降低数据集不确定性的特征，每轮迭代都会使用信息增益来选择最优特征。</p>
+</li>
+<li><p>信息增益值的大小是相对于训练数据集而言的，并没有绝对意义。在训练数据集的经验熵大的时候，信息增益值会偏大，反之则偏小。因此可以使用信息增益比对这一问题进行校正，这是特征选择的另一个准则。</p>
+</li>
+<li><p>信息增益比：<br>$$<br>g_R(D,A)=\frac{g(D,A)}{H(D)}<br>$$</p>
+</li>
+<li><p>ID3算法：在决策树各个节点上应用<strong>信息增益</strong>选择特征，递归地构建决策树。</p>
+</li>
+<li><p>C4.5算法：与ID3算法类似，区别在于使用<strong>信息增益比</strong>选择特征。</p>
+</li>
 </ul>
+<h2 id="2-决策树剪枝"><a href="#2-决策树剪枝" class="headerlink" title="2. 决策树剪枝"></a>2. 决策树剪枝</h2><ul>
+<li><p>决策树生成算法递归地产生决策树，直到不能继续下去为止，这样的树往往出现过拟合现象。</p>
+</li>
+<li><p>在决策树学习中将已生成的树进行简化的过程，称为剪枝。具体地，剪枝从已生成的树上裁掉一些子树或叶结点，并将其根结点或父结点作为新的叶结点，从而简化分类树模型。</p>
+</li>
+<li><p>决策树的剪枝往往通过极小化决策树整体的损失函数或代价函数来实现。</p>
+</li>
+<li><p>结点的经验熵：<br>$$<br>H_t(T)=-\sum_{t=1}^{|T|}\frac{N_{tk}}{N_t}\log\frac{N_{tk}}{N_t}<br>$$</p>
+</li>
+<li><p>决策树的损失函数：<br>$$<br>C_\alpha(T)=\sum_{t=1}^{|T|}N_tH_t(T)+\alpha|T|=-=\sum_{t=1}^{|T|}\sum_{k=1}^{K}N_{tk}\log{\frac{N_{tk}}{N_t}}+\alpha|T|=C(T)+\alpha|T|<br>$$<br>其中，t为树T的叶节点，该叶结点有$N_t$个样本，其中k类的样本点有$N_{tk}$个，$H_t(T)$为叶结点t上的经验熵，$a\geq0$为参数。</p>
+<p>式中C(T)表示模型对训练数据的预测误差，即模型与训练数据的拟合程度，|T|表示模型复杂度，参数$\alpha\geq0$控制两种之间的影响。剪枝就是当$\alpha$确定时，选择损失函数最小的模型。</p>
+</li>
+<li><p>决策树生成只考虑了通过提高信息增益（或信息增益比）对训练数据进行更好的拟合。而决策树剪枝通过优化损失函数还考虑了减小模型复杂度。决策树生成学习局部的模型，而决策树剪枝学习整体的模型。 </p>
+</li>
+<li><p>决策树剪枝算法：</p>
+<ol>
+<li>计算每个结点的经验熵；</li>
+<li>递归地从叶结点向上回缩：设一组叶结点回缩到其父结点之前与之后到整体树分别为$T_B$与$T_A$，其对应的损失函数值分别是$C_\alpha(T_B)$与$C_\alpha(T_A)$，如果$C_\alpha(T_A)\leq C_\alpha(T_B)$，则进行剪枝，将父结点变为新的叶结点。</li>
+<li>重复第2步骤，直到不能继续为止，得到损失函数最小的子树$T_\alpha$。</li>
+</ol>
+</li>
+</ul>
+<h2 id="3-CART算法"><a href="#3-CART算法" class="headerlink" title="3. CART算法"></a>3. CART算法</h2><ul>
+<li>CART是应用广泛的决策树学习方法。CART同样由特征选择、树的生成及剪枝组成，既可以用于分类也可以用于回归。</li>
+<li>CART是在给定输入随机变量X条件下输出随机变量Y的条件概率分布的学习方法。CART假设决策树是二叉树，内部结点特征的取值为“是”和“否”，左分支是取值为“是”的分支，右分支是取值为“否”的分支。这样的决策树等价于递归地二分每个特征，将输入空间即特征空间划分为有限个单元，并在这些单元上确定预测的概率分布，也就是在输入给定的条件下输出的条件概率分布。</li>
+<li>CART决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择，生成二叉树。</li>
+</ul>
+<h3 id="3-1-回归树"><a href="#3-1-回归树" class="headerlink" title="3.1 回归树"></a>3.1 回归树</h3><p>选择第$j$个变量$x^j$和它取的值s，作为切分变量和切分点，并定义两个区域：<br>$$<br>R_1(j,s)={ x|x^j\leq s},R_2(j,s )={x|x^j&gt;s}<br>$$<br>寻找最优切分变量$j$和最优切分点s，即求解：<br>$$<br>min_{j,s}[min_{c_1}\sum_{x_i\in R_1(j,s)}(y_i-c1)^2+min_{c_2}\sum_{x_i\in R_2(j,s)}(y_i-c2)^2]<br>$$<br>$c_1,c_2$为指定二分区域内对应y的平均值。</p>
+<p>遍历所有输入变量，找到最优的切分变量$j$以及每个切分变量的最优切分点s，依次将输入空间划分为两个区域，对每个区域重复上述划分过程，直到满足停止条件为止。</p>
+<h3 id="3-2-分类树"><a href="#3-2-分类树" class="headerlink" title="3.2 分类树"></a>3.2 分类树</h3><ul>
+<li><p>分类树使用基尼指数选择最优特征，同时决定该特征的最优二值切分点。</p>
+</li>
+<li><p>假设有K个类，样本点属于第k类的概率为$p_k$，则概率分布的基尼指数定义为：<br>$$<br>Gini(p)=\sum_{k=1}^{K}p_k(1-p_k)=1-\sum_{k=1}^Kp_k^2<br>$$</p>
+</li>
+<li><p>对于给定样本集合D，$C_k$是D中属于第k类的样本子集，K是类的个数，其基尼指数定义为：<br>$$<br>Gini(D)=1-\sum_{k=1}^K\left(\frac{|C_k|}{|D|}\right)^2<br>$$</p>
+</li>
+<li><p>在特征A条件下，集合D的基尼指数定义为：<br>$$<br>Gini(D,A)=\frac{|D_1|}{|D|}Gini(D_1)+\frac{|D_2|}{|D|}Gini(D_2)<br>$$</p>
+</li>
+</ul>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>决策树使用逐步分解的过程，使用信息熵的概念，递归的使用最优特征对数据集进行划分，最终完成分类过程，决策树的每个路径都是一个分类规则，叶子结点为最终的分类结果。</p>
+<p>利用信息熵选择最优特征的想法，对统计学习方法中，模型特征的选择很有借鉴意义。</p>
 
       
 
@@ -218,7 +284,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ML</a>
         		</li>
       		
 		</ul>
@@ -274,7 +340,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/12/08/SparkStreaming实践总结/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2018/07/20/《统计学习方法5——决策树》/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -288,18 +354,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/12/11/《深入理解JVM虚拟机》阅读总结/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          《深入理解JVM虚拟机》阅读总结
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/10/17/Apache Livy介绍/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Apache Livy介绍</div>
+    <a href="/2018/07/19/《统计学习方法4——朴素贝叶斯法》/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">《统计学习方法4——朴素贝叶斯法》</div>
       <i class="icon-circle-right"></i>
     </a>
   
