@@ -6,24 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>HBase系列5——性能优化 | AlbertLee的博客</title>
+  <title>《统计学习方法6——Logistic回归与最大熵模型》 | AlbertLee的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="HBase的性能优化主要围绕提升HBase的读写性能围绕，包括Client端程序优化以及HBase服务端参数配置优化。其中，Client端可以从减少RPC调用次数入手，使用缓存，采用批量请求的方式。HBase服务端参数配置优化，又主要包括良好的RowKey设置保证负载均衡，良好的ColumnFamily设置，适当的MemStore Flush配置和Compaction配置以及合理的内存规划等方面。">
-<meta name="keywords" content="HBase">
+  <meta name="description" content="1. Logistic回归 设X是连续随机变量，X服从logistic分布是指X具有下列分布函数与密度函数：$$F(X)=P(X\leq x)=\frac{1}{1+e^{-(x-u)/\gamma}}$$  $$f(X)=F^{‘}(X)=\frac{e^{-(x-u)/\gamma}}{\gamma(1+e^{-(x-u)/\gamma})^2}$$ $u$为位置函数，$\gamma\geq0">
+<meta name="keywords" content="ML">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HBase系列5——性能优化">
-<meta property="og:url" content="http://yoursite.com/2017/10/15/HBase系列5——性能优化/index.html">
+<meta property="og:title" content="《统计学习方法6——Logistic回归与最大熵模型》">
+<meta property="og:url" content="http://yoursite.com/2018/07/22/《统计学习方法6——Logistic回归与最大熵模型》/index.html">
 <meta property="og:site_name" content="AlbertLee的博客">
-<meta property="og:description" content="HBase的性能优化主要围绕提升HBase的读写性能围绕，包括Client端程序优化以及HBase服务端参数配置优化。其中，Client端可以从减少RPC调用次数入手，使用缓存，采用批量请求的方式。HBase服务端参数配置优化，又主要包括良好的RowKey设置保证负载均衡，良好的ColumnFamily设置，适当的MemStore Flush配置和Compaction配置以及合理的内存规划等方面。">
+<meta property="og:description" content="1. Logistic回归 设X是连续随机变量，X服从logistic分布是指X具有下列分布函数与密度函数：$$F(X)=P(X\leq x)=\frac{1}{1+e^{-(x-u)/\gamma}}$$  $$f(X)=F^{‘}(X)=\frac{e^{-(x-u)/\gamma}}{\gamma(1+e^{-(x-u)/\gamma})^2}$$ $u$为位置函数，$\gamma\geq0">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%962.png">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%961.png">
-<meta property="og:image" content="http://ojr3dihlp.bkt.clouddn.com/HBase%E5%86%99%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96.png">
-<meta property="og:updated_time" content="2018-07-14T11:27:41.064Z">
+<meta property="og:updated_time" content="2018-07-22T10:29:02.127Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HBase系列5——性能优化">
-<meta name="twitter:description" content="HBase的性能优化主要围绕提升HBase的读写性能围绕，包括Client端程序优化以及HBase服务端参数配置优化。其中，Client端可以从减少RPC调用次数入手，使用缓存，采用批量请求的方式。HBase服务端参数配置优化，又主要包括良好的RowKey设置保证负载均衡，良好的ColumnFamily设置，适当的MemStore Flush配置和Compaction配置以及合理的内存规划等方面。">
-<meta name="twitter:image" content="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%962.png">
+<meta name="twitter:title" content="《统计学习方法6——Logistic回归与最大熵模型》">
+<meta name="twitter:description" content="1. Logistic回归 设X是连续随机变量，X服从logistic分布是指X具有下列分布函数与密度函数：$$F(X)=P(X\leq x)=\frac{1}{1+e^{-(x-u)/\gamma}}$$  $$f(X)=F^{‘}(X)=\frac{e^{-(x-u)/\gamma}}{\gamma(1+e^{-(x-u)/\gamma})^2}$$ $u$为位置函数，$\gamma\geq0">
   
     <link rel="alternative" href="/atom.xml" title="AlbertLee的博客" type="application/atom+xml">
   
@@ -163,50 +159,52 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-HBase系列5——性能优化" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-《统计学习方法6——Logistic回归与最大熵模型》" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      HBase系列5——性能优化
+      《统计学习方法6——Logistic回归与最大熵模型》
     </h1>
   
 
         
-        <a href="/2017/10/15/HBase系列5——性能优化/" class="archive-article-date">
-  	<time datetime="2017-10-15T02:43:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-10-15</time>
+        <a href="/2018/07/22/《统计学习方法6——Logistic回归与最大熵模型》/" class="archive-article-date">
+  	<time datetime="2018-07-22T14:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-22</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>HBase的性能优化主要围绕提升HBase的读写性能围绕，包括Client端程序优化以及HBase服务端参数配置优化。其中，Client端可以从减少RPC调用次数入手，使用缓存，采用批量请求的方式。HBase服务端参数配置优化，又主要包括良好的RowKey设置保证负载均衡，良好的ColumnFamily设置，适当的MemStore Flush配置和Compaction配置以及合理的内存规划等方面。</p>
-<h2 id="1-读性能优化"><a href="#1-读性能优化" class="headerlink" title="1. 读性能优化"></a>1. 读性能优化</h2><p><img src="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%962.png" alt=""></p>
-<h3 id="1-1-Client端"><a href="#1-1-Client端" class="headerlink" title="1.1 Client端"></a>1.1 Client端</h3><h4 id="1-1-1-减少RPC请求次数"><a href="#1-1-1-减少RPC请求次数" class="headerlink" title="1.1.1 减少RPC请求次数"></a>1.1.1 减少RPC请求次数</h4><p>Client端查询程序开发时，针对Get请求，在Client端宕机时允许Get请求丢失一部分的情况下，可以采用批量Get请求的方式，减少RPC请求次数。针对Scan请求，默认会每次从HBase服务端拉取100条数据进行缓存，当Scan的数据量较大时，我们可以增大Caching的条数，每次从HBase服务端拉取1000条数据，从而减少RPC请求次数。<br><a id="more"></a></p>
-<h4 id="1-1-2-精确查询"><a href="#1-1-2-精确查询" class="headerlink" title="1.1.2 精确查询"></a>1.1.2 精确查询</h4><p>HBase服务端在读取数据时会Client端的查询条件对表中的数据进行检索，因此Client端在读取数据时尽量指定RowKey或RowKey-Column精确查询，缩小HBase服务端的检索范围，从而提升读取性能。</p>
-<h4 id="1-1-3-大数据量Scan关闭缓存"><a href="#1-1-3-大数据量Scan关闭缓存" class="headerlink" title="1.1.3 大数据量Scan关闭缓存"></a>1.1.3 大数据量Scan关闭缓存</h4><p>Scan拉取的数据都会保存在Client端的本地缓存中，当数据量特别大，由于本地缓存较小，往往会将内存中的其他关键数据交换出去，影响Client端性能。因此针对每条数据仅仅使用一次的情况，我们可以关闭Scan的本地缓存。</p>
-<h3 id="1-2-服务端"><a href="#1-2-服务端" class="headerlink" title="1.2 服务端"></a>1.2 服务端</h3><h4 id="1-2-1-负载均衡"><a href="#1-2-1-负载均衡" class="headerlink" title="1.2.1 负载均衡"></a>1.2.1 负载均衡</h4><p>HBase中若数据集中在几个甚至一个HRegionServer中，读取数据时，该HRegionServer负载会特别重，成为数据查询的单点性能瓶颈。良好的RowKey设计，可以保证数据均匀的分布在HBase集群中，负载均衡。因此读取数据时，HBase集群可以实现良好的分布式查询。</p>
-<h4 id="1-2-2-BloomFilter"><a href="#1-2-2-BloomFilter" class="headerlink" title="1.2.2 BloomFilter"></a>1.2.2 BloomFilter</h4><p>每个ColumnFamily中都可以配置BloomFilter，分为None/Row/Row-Col三种，当BloomFilter开启时，查询数据的过程中可以利用BloomFilter快速的过滤掉不包含所需数据的HFile文件，可以大大提升读取速度。</p>
-<h4 id="1-2-3-BlockCache"><a href="#1-2-3-BlockCache" class="headerlink" title="1.2.3 BlockCache"></a>1.2.3 BlockCache</h4><p>BlockCache是读缓存，可以大幅提升读取性能。我们可以针对读多写少的应用场景，适当提高BlockCache的占比，降低MemStore的占比，从而进一步提升读取性能。<br>另一方面，由于BlockCahce中的数据需要根据数据热度，频繁交换，因此BlockCache的垃圾回收机制的配置也至关重要，对BlockCahce的影响较大，在BucketCache的offheap模式下GC表现很优越，建议使用。</p>
-<h4 id="1-2-4-Compaction配置"><a href="#1-2-4-Compaction配置" class="headerlink" title="1.2.4 Compaction配置"></a>1.2.4 Compaction配置</h4><p>Compaction主要用来对HFile文件进行合并，保证Store下的HFile文件不至于过多，影响读取性能。Compaction分为Minor-Compaction和Major-Compaction。</p>
-<ol>
-<li>Minor Compaction是指选取一些小的、相邻的StoreFile将他们合并成一个更大的StoreFile，在这个过程中不会处理已经Deleted或Expired的Cell。一次Minor Compaction的结果是更少并且更大的StoreFile。</li>
-<li>Major Compaction是指将所有的StoreFile合并成一个StoreFile，这个过程还会清理三类无意义数据：被删除的数据、TTL过期数据、版本号超过设定版本号的数据。另外，一般情况下，Major Compaction时间会持续比较长，整个过程会消耗大量系统资源，对上层业务有比较大的影响。因此线上业务都会将关闭自动触发Major Compaction功能，改为手动在业务低峰期触发。<br>Compaction对HFile的合并主要通过两个参数来设置，<code>hbase.hstore.compactionThreshold</code>表示一个store中的文件数超过多少就应该进行合并。<code>hbase.hstore.compaction.max.size</code>表示参数合并的文件大小最大是多少，超过此大小的文件不能参与合并。<br><code>hbase.hstore.compactionThreshold</code>设置不能太大，默认是3个；设置需要根据Region大小确定，通常可以简单的认为<code>hbase.hstore.compaction.max.size = RegionSize / hbase.hstore.compactionThreshold</code><h4 id="1-2-5-ColumnFamily-列簇设计"><a href="#1-2-5-ColumnFamily-列簇设计" class="headerlink" title="1.2.5 ColumnFamily 列簇设计"></a>1.2.5 ColumnFamily 列簇设计</h4>列簇设计优化也是HBase的读写性能优化点，包括列簇数量、BlockSize大小、BloomFilter设置、Compresssion等配置，都会对HBase的读写性能产生影响。<h4 id="1-2-6-HDFS优化"><a href="#1-2-6-HDFS优化" class="headerlink" title="1.2.6 HDFS优化"></a>1.2.6 HDFS优化</h4>因为HBase是基于HDFS存储的，包含HLog和HFile都存储在HDFS上，因此有关HDFS上的一些配置也会影响HBase的性能。</li>
-</ol>
-<p><img src="http://ojr3dihlp.bkt.clouddn.com/HBase%E8%AF%BB%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%961.png" alt=""></p>
-<h2 id="2-写性能优化"><a href="#2-写性能优化" class="headerlink" title="2. 写性能优化"></a>2. 写性能优化</h2><p><img src="http://ojr3dihlp.bkt.clouddn.com/HBase%E5%86%99%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96.png" alt=""></p>
-<h3 id="2-1-Client端"><a href="#2-1-Client端" class="headerlink" title="2.1 Client端"></a>2.1 Client端</h3><p>与读性能优化相同，写性能优化在Client端主要也是尽量减少Client与服务端的RPC通信次数。Client端的Put操作可以单挑写入，也可以通过List<put>同步批量写入，或通过将AutoFlush设置为False，关闭默认的自动提交，这时每个Put请求都会保存在Client端本地缓存，当缓存达到阈值(默认2M)或手动Commit时，才会将缓存的多个Put请求批量发送至HBase服务端，进而实现异步批量操作。<br>需要注意的是，无论时读批量操作还是写批量操作，当Client端宕机时，都有丢失操作请求的风险。</put></p>
-<h3 id="2-2-服务端"><a href="#2-2-服务端" class="headerlink" title="2.2 服务端"></a>2.2 服务端</h3><h4 id="2-2-1-关闭WAL"><a href="#2-2-1-关闭WAL" class="headerlink" title="2.2.1 关闭WAL"></a>2.2.1 关闭WAL</h4><p>WAL机制下，写入HBase的数据首先会写入HLog进行持久化，然后才会写入MemStore。若部分业务允许HReionServer异常下可以丢失MemStore尚未溢出到HFile的数据，且更加注重HBase的写入性能，则我们可以考虑关闭WAL机制，使写入数据跳过HLog部分，直接写入MemStore，这种方式可以大幅提高HBase的写入性能。</p>
-<h4 id="2-2-2-负载均衡"><a href="#2-2-2-负载均衡" class="headerlink" title="2.2.2 负载均衡"></a>2.2.2 负载均衡</h4><p>与读性能优化小节中提到的相同，良好的RowKey设置，HBase集群良好的负载均衡，可以保证数据的写入性能。<br>另一方面，如果表的Region数量少于HBase集群中HRegionServer数量，将无法充分利用HBase的资源，无法充分进行分布式读写，因此我们可以通过预分区或对高负载Region进行切分等方式，使Region数量不少于HRegionServer数量。</p>
-<h4 id="2-2-3-MemStore配置"><a href="#2-2-3-MemStore配置" class="headerlink" title="2.2.3 MemStore配置"></a>2.2.3 MemStore配置</h4><p>MemStore中的数据在溢出到HFile时以及Store对HFile文件进行Compaction操作时，HBase的写入性能会受到严重影响，因此MemStore中有关Flush和Compaction的参数对HBase的写入性能优化至关重要。</p>
-<ol>
-<li>一旦整个RegionServer上所有Memstore占用内存大小总和大于配置文件中upperlimit时，系统就会执行RegionServer级别flush，flush算法会首先按照Region大小进行排序，再按照该顺序依次进行flush，直至总Memstore大小低至lowerlimit。这种flush通常会阻塞HRgionServer较长时间。如果RegionServer上Region较多，而Memstore总大小设置的很小（JVM设置较小或者upper.limit设置较小），就会触发HRegionServer级别flush。因此对于该参数需要合理配置。</li>
-<li><code>hbase.hstore.blockingStoreFiles</code>该参数表示如果当前Store中文件数大于该值，系统将会强制执行Compaction操作进行文件合并，合并的过程会阻塞整个Store的写入。该参数一般建议设置为5～8左右。<h4 id="2-2-4-数据长度过长"><a href="#2-2-4-数据长度过长" class="headerlink" title="2.2.4 数据长度过长"></a>2.2.4 数据长度过长</h4>当HBase的KeyValue保存的数据过长时，写入数据时会耗费较长时间，数据吞吐量也较低，这种情况下，由于HBase耗费很多的资源处理该业务的读写请求，其他业务的读写性能将受到严重影响，这是需要特别注意的一点。</li>
-</ol>
-<p>ps: 参考文献及图片来源：<a href="http://hbasefly.com/" target="_blank" rel="noopener"><strong>有态度的HBase/Spark/BigData</strong></a></p>
+        <h2 id="1-Logistic回归"><a href="#1-Logistic回归" class="headerlink" title="1. Logistic回归"></a>1. Logistic回归</h2><ul>
+<li>设X是连续随机变量，X服从logistic分布是指X具有下列分布函数与密度函数：<br>$$<br>F(X)=P(X\leq x)=\frac{1}{1+e^{-(x-u)/\gamma}}<br>$$</li>
+</ul>
+<p>$$<br>f(X)=F^{‘}(X)=\frac{e^{-(x-u)/\gamma}}{\gamma(1+e^{-(x-u)/\gamma})^2}<br>$$</p>
+<p>$u$为位置函数，$\gamma\geq0$为形状函数。分布函数属于logistic函数，是一条S曲线。</p>
+<a id="more"></a>
+<ul>
+<li>二项logistic回归模型：<br>$$<br>P(Y=1|x)=\frac{exp(w·x)}{1+exp(w·x)}<br>$$</li>
+</ul>
+<p>$$<br>P(Y=0|x)=\frac{1}{1+exp(w·x)}<br>$$</p>
+<ul>
+<li><p>事件的几率：事件发生概率与事件不发生概率的比值：$\frac{p}{1-p}$</p>
+</li>
+<li><p>事件的对数几率：$\log{\frac{p}{1-p}}$</p>
+</li>
+<li><p>二项logistic回归模型的对数几率：<br>$$<br>\log{\frac{P(Y=1|x)}{P(Y=0|x)}}=w·x<br>$$<br>输出Y=1的对数几率函数为输入x的线性函数$w·x$</p>
+</li>
+<li><p>多项logistic回归模型：<br>$$<br>P(Y=k|x)=\frac{exp(w_k·x)}{1+\sum_{k=1}^{K-1}exp(w_k·x)}<br>$$</p>
+</li>
+</ul>
+<h2 id="2-最大熵原理"><a href="#2-最大熵原理" class="headerlink" title="2. 最大熵原理"></a>2. 最大熵原理</h2><ul>
+<li><p>最大熵原理认为要选择的概率模型首先必须满足已有的事实，即约束条件。在没有更多信息的情况下，那些不确定的部分都是“等可能的”。最大熵原理通过熵的最大化来表示等可能性。“等可能”不容易操作，而熵则是一个可优化的数值指标。<br>$$<br>H(D|A)=\sum_{i=1}^n\frac{|D_i|}{|D|}H(D_i)=-\sum_{i=1}^n\frac{|D_i|}{|D|}\sum_{k=1}^K\frac{|D_{ik|}}{|D_i|}\log_2{\frac{|D_{ik|}}{|D_i|}}<br>$$</p>
+</li>
+<li><p>逻辑斯谛回归模型、最大熵模型学习归结为以似然函数为目标函数的最优化问题，通常通过迭代算法求解。从最优化的观点看，这时的目标函数具有很好的性质。它是光滑的凸函数，因此多种最优化的方法都适用，保证能找到全局最优解。常用的方法有改进的迭代尺度法、梯度下降法、牛顿法或拟牛顿法。牛顿法或拟牛顿法一般收敛速度更快。 </p>
+</li>
+</ul>
 
       
 
@@ -220,7 +218,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ML</a>
         		</li>
       		
 		</ul>
@@ -276,7 +274,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2017/10/15/HBase系列5——性能优化/" alt="微信分享二维码">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2018/07/22/《统计学习方法6——Logistic回归与最大熵模型》/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -290,18 +288,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2017/10/17/Apache Livy介绍/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Apache Livy介绍
-        
-      </div>
-    </a>
   
-  
-    <a href="/2017/10/14/HBase系列4——API介绍与Spark读写HBase/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">HBase系列4——常用API介绍与Spark读写HBase</div>
+    <a href="/2018/07/20/《统计学习方法5——决策树》/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">《统计学习方法5——决策树》</div>
       <i class="icon-circle-right"></i>
     </a>
   
