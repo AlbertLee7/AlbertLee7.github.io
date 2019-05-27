@@ -46,7 +46,7 @@
 <div class="intrude-less">
 	<header id="header" class="inner">
 		<a href="/" class="profilepic">
-			<img src="https://github.com/AlbertLee7/github-blog-img/blob/master/head.jpg" class="js-avatar">
+			<img src="https://raw.githubusercontent.com/AlbertLee7/raw.githubusercontent-blog-img/master/img/head.jpg" class="js-avatar">
 		</a>
 		<hgroup>
 		  <h1 class="header-author"><a href="/">AlbertLee</a></h1>
@@ -106,7 +106,7 @@
 	<div class="intrude-less">
 		<header id="header" class="inner">
 			<div class="profilepic">
-				<img src="https://github.com/AlbertLee7/github-blog-img/blob/master/head.jpg" class="js-avatar">
+				<img src="https://raw.githubusercontent.com/AlbertLee7/raw.githubusercontent-blog-img/master/img/head.jpg" class="js-avatar">
 			</div>
 			<hgroup>
 			  <h1 class="header-author js-header-author">AlbertLee</h1>
@@ -158,6 +158,201 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-HBase系列1——简介及基本架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/27/HBase系列1——简介及基本架构/">HBase系列1——简介及基本架构</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/27/HBase系列1——简介及基本架构/" class="archive-article-date">
+  	<time datetime="2017-08-27T03:12:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h2><p>HBase是大数据组件中No-SQL数据库的典型代表，提供了高可靠、可伸缩、高性能、面向列的分布式存储。HBase逻辑上引入了Row-ColumnFamily-Qualifier(限定符)-Value-TimeStamp(Version)的概念，Value在数据库中以Byte[]数组存在，且Vaule允许为空。与关系型数据库相比，HBase相当于一个巨大的松散嵌套Map，因此对HBase进行横向扩展是极其方便的，可在廉价物理机上搭建并根据数据量的增多而横向扩展，为海量数据提供高性能的可靠存储。<br>HBase的数据写入首先将数据缓存在内存中，达到阈值后再顺序刷写磁盘的方式<strong>(所有的Write/Update均为Append磁盘文件的方式）</strong>，避免了随机写入造成的性能低下，同时HBase以HDFS为最终的存储层，利用HDFS的特性保证了数据的容灾性。HBase的数据读取提供了服务端缓存、BloomFilter(布隆过滤)等机制，保证了随机读取的性能。</p>
+<h2 id="2-HBase与RDBMS的对比"><a href="#2-HBase与RDBMS的对比" class="headerlink" title="2. HBase与RDBMS的对比"></a>2. HBase与RDBMS的对比</h2><p>HBase作为NoSql数据库，采用分布式存储在读写速度方面比RDBMS数据库快，且横向扩展能力强，当存储空间和读写速度遇到瓶颈时，通过增添机器横向扩建，存储空间和读写速度都能够得到很大提升。同时HBase采用列式存储，且结构松散，允许某列为空，可以存储半结构化数据。但这些都是有代价的，是以牺牲事务为代价的，且RDBMS支持多种数据类型，可以对任意列建立索引，支持事务，支持SQL语言，可以在多个表之间进行Join等操作，只需要一条SQL语句即可，同时支持表锁、页锁与行锁等。与之相比，HBase仅支持字节数组数据结构，仅支持RowKey索引，不支持多表Join，原生不支持SQL语言，需要通过外部插件才能实现对SQL语言的支持。<br>因此在选择时，需要根据具体的业务需要，从多方面综合考虑来选取最终的存储方案。<br>
+        
+          <a class="article-more-a" href="/2017/08/27/HBase系列1——简介及基本架构/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">HBase</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/27/HBase系列1——简介及基本架构/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-ElasticSearch系列1—简介及基本架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/22/ElasticSearch系列1—简介及基本架构/">ElasticSearch系列1——简介及基本架构</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/22/ElasticSearch系列1—简介及基本架构/" class="archive-article-date">
+  	<time datetime="2017-08-22T12:11:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1. 简介"></a>1. 简介</h2><p>ElasticSearch是一个开源的分布式搜索和分析引擎，它在Lucence基础上做了二次开发，将Lucence繁琐的API调用变为简洁通用的ResetFul API，并提供了Java API，以及与Storm、Spark、Hadoop等大数据开源组件相适配的API接口。通过ElasticSearch，我们可以实现对JSON格式数据源的存储、文本搜索、结构化搜索和分析。ElasticSearch无论是单节点部署还是集群部署都较为简单，它可以自动完成数据存储、数据容灾、数据检索等多种功能，在维基百科、英国卫报、GitHub等得到了广泛应用。</p>
+<h2 id="2-Restful-API"><a href="#2-Restful-API" class="headerlink" title="2. Restful API"></a>2. Restful API</h2><p><img src="http://ojr3dihlp.bkt.clouddn.com/Restful2.jpg" alt=""></p>
+<p>REST直译为状态形式转移，是近几年极为火热的Client与Sever交互形式，之前的Client与Server主要采用RPC远程调用的方式，Server提供函数API，Client使用函数并将函数参数传递给Server，Server接收到函数执行相应动作并将结果返回。这种交互形式存在的主要弊端就是随着移动互联网的兴起，Client与Server需要同时提供对Web、IOS和Andriod的支持，这对开发和维护人员是一个很大的负担。而Rest形式的交互方式则统一了交互方式，多种Client可以使用统一的Restful API与Server通信。Client与Server的交互无非是对指定的数据进行一系列的操作，在Restful API中，我们将数据资源与执行动作分离开来，每个数据资源都可以通过URL获得，并且每个数据资源是无状态的，不依赖于其他资源，使用GET、PUT、POST、DELETE等指定动作，配合传入的一系列参数，可以实现所有交互，且交互简单，不存在这次交互依赖上次交互的问题(因为所有资源都是无状态的)。<br>
+        
+          <a class="article-more-a" href="/2017/08/22/ElasticSearch系列1—简介及基本架构/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">ElasticSearch</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/22/ElasticSearch系列1—简介及基本架构/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-新的征程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/20/新的征程/">新的征程</a>
+    </h1>
+  
+
+        
+        <a href="/2017/08/20/新的征程/" class="archive-article-date">
+  	<time datetime="2017-08-20T02:39:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-08-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近公司安排了比较富裕的时间，让我进行自学，最近一年虽然做了一些大数据包括JStorm、Spark、ElasticSearch等项目，但仍然停留在使用阶段，对其中的具体细节并没有有一个深入的理解，也没有进行很好的梳理这才有了上半年的JStorm源码分析，但鉴于时间原因，对JStorm的源码的阅读，也仅仅停留在Nimbus、Supervisor启动、Topology的提交阶段。因此正好利用这个难得的学习时间段，系统的研究一下Spark、HBase、ElasticSearch、Kafka这几个大数据组件，正好包括了从数据输入端到计算引擎，再到数据库存储、数据检索整个大数据处理流程。通过近些天的学习，由于公司还没有安排具体的项目进行实践，因而计划在学习过程中，对所学内容在博客上进行一个系统的梳理。有时候静下心来想想，博客更大程度上是写给自己看的，只有不断的梳理知识点，不断的改进与完善，才能真正将知识点转变为自身的内在。近一段时间内，主要会写《Spark系列》、《HBase系列》、《ElasticSearch系列》等内容，更多的是对所学知识的一个梳理与总结。<br>
+        
+          <a class="article-more-a" href="/2017/08/20/新的征程/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/08/20/新的征程/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
   
     <article id="post-JStorm源码阅读系列4—SubmitTopology分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -624,217 +819,6 @@
 
 
   
-    <article id="post-Java编程思想读书笔记2" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/21/Java编程思想读书笔记2/">《Java编程思想》读书笔记——2</a>
-    </h1>
-  
-
-        
-        <a href="/2017/02/21/Java编程思想读书笔记2/" class="archive-article-date">
-  	<time datetime="2017-02-21T13:21:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="《Java编程思想》第5章——初始化与清理"><a href="#《Java编程思想》第5章——初始化与清理" class="headerlink" title="《Java编程思想》第5章——初始化与清理"></a>《Java编程思想》第5章——初始化与清理</h2><ol>
-<li>构造器是一种特殊类型的方法，因为它没有返回值，这与返回值为void明显不同。</li>
-<li>每个重载的方法都必须有一个独一无二的参数类型列表，甚至参数顺序的不同也足以区分两个方法，不过一般情况不这么做，因为这会使代码难以维护。需要注意的是，通过返回值来区分重载方法是行不通的。</li>
-<li>如果你写的类中没有构造器，则编译器会自动帮你创建一个默认构造器。如果你已经定义了一个构造器（无论是否有参数），编译器就不会帮你自动创建默认构造器。</li>
-<li>this关键字只能在方法内部使用，表示对“调用方法的那个对象”的引用。this关键字对于将当前对象传递给其他方法也很有用。</li>
-<li>在构造器中可以通过this调用另一个构造器，但却不能调用两个，此外，必须将构造器调用置于最起始处，否则编译器会报错。在类中除构造器之外，编译器禁止在其他任何方法中调用构造器。</li>
-<li>static方法就是没有this的方法，在static方法的内部不能调用非静态方法。</li>
-<li>一旦垃圾回收器准备好释放对象占用的存储空间，将首先调用finalize()方法，并且在下一次垃圾回收动作发生时，才会真正回收对象占用的内存。所以可以用finalize()在垃圾回收时刻做一些重要的清理工作。但finalize()不能滥用，因为垃圾回收器和与垃圾回收有关的任何行为（包括finalize()），它们都必须同内存技巧回收有关，这就对finalize()的需求限制到一种特殊情况，即通过某种创建对象方式以外的方式为对象分配了存储空间。
-        
-          <a class="article-more-a" href="/2017/02/21/Java编程思想读书笔记2/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/02/21/Java编程思想读书笔记2/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-serialVersionUID用法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/14/serialVersionUID用法/">serialVersionUID的用法</a>
-    </h1>
-  
-
-        
-        <a href="/2017/02/14/serialVersionUID用法/" class="archive-article-date">
-  	<time datetime="2017-02-14T12:20:07.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-14</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>　　在Java编程中为了进行网络传输或方便磁盘存储，我们经常需要对Java对象进行序列化，Java的对象序列化就是将那些实现了Serializable接口的对象转换成字符序列，并能够在需要时反序列化为原来的Java对象。因此，只要对象实现了Serializable接口(该接口不包含任何方法)，即可对其进行序列化。</p>
-<h2 id="Java内置序列化与反序列化"><a href="#Java内置序列化与反序列化" class="headerlink" title="Java内置序列化与反序列化"></a>Java内置序列化与反序列化</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestObject</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> a;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> b;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestObject</span><span class="params">(<span class="keyword">int</span> a,  <span class="keyword">long</span> b)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.a = a;</span><br><span class="line">        <span class="keyword">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"a: "</span> + a + <span class="string">" b: "</span>+ b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-          <a class="article-more-a" href="/2017/02/14/serialVersionUID用法/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/02/14/serialVersionUID用法/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Java编程思想读书笔记1" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/02/12/Java编程思想读书笔记1/">《Java编程思想》读书笔记——1</a>
-    </h1>
-  
-
-        
-        <a href="/2017/02/12/Java编程思想读书笔记1/" class="archive-article-date">
-  	<time datetime="2017-02-12T14:16:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="《Java编程思想》第2章——一切都是对象"><a href="#《Java编程思想》第2章——一切都是对象" class="headerlink" title="《Java编程思想》第2章——一切都是对象"></a>《Java编程思想》第2章——一切都是对象</h2><ol>
-<li>在处理类型的层次结构时，经常想把一个对象不当作它所属的特定类型来对待，而是将其当作基类的对象来对待。这使得人们可以编写出不依赖于特定类型的代码。</li>
-<li>Java完全采用了动态内存分配方式。每当想要创建新对象时，就要使用new关键字来构建此对象的动态实例。</li>
-<li>Java提供了被称为“垃圾回收器”的机制，它可以自动发现对象何时不再被使用，并继而销毁它。</li>
-<li>异常是一种对象，它从出错地点被“抛出”，并被专门设计用来处理特定类型错误的相应的异常处理器“捕获”。</li>
-</ol>
-<h2 id="《Java编程思想》第2章——一切都是对象-1"><a href="#《Java编程思想》第2章——一切都是对象-1" class="headerlink" title="《Java编程思想》第2章——一切都是对象"></a>《Java编程思想》第2章——一切都是对象</h2><ol>
-<li>Java中的对象必须由用户自己创建。</li>
-<li>Java中的基本类型存储在堆栈中，对象存储在堆中，用堆进行存储分配和清理可能比堆栈进行存储分配需要更多时间，但是灵活性要更高。</li>
-<li>基本类型具有的包装器类，使得可以在堆中创建一个非基本对象，用来表示对应的基本类型。</li>
-<li>在Java中不需要销毁对象，该工作由Java的垃圾回收机制自动完成。</li>
-<li><font color="red">在Java中你所做的全部工作就是定义类，产生那些类的对象，以及发送信息给这些对象。</font>
-        
-          <a class="article-more-a" href="/2017/02/12/Java编程思想读书笔记1/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/02/12/Java编程思想读书笔记1/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
@@ -949,11 +933,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -961,7 +945,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
               </li>
              
               <li class="article-tag-list-item">

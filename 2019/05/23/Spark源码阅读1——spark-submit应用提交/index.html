@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+  <link rel="dns-prefetch" href="http://yoursite.com">
+  <title>Spark源码阅读1——spark-submit应用提交整体流程 | AlbertLee的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1. spark-submit脚本 判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。 执行exec &amp;quot;${SPARK_HOME}&amp;quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &amp;quot;$@&amp;quot;命令，调用spark-class脚本。">
+<meta name="keywords" content="Spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark源码阅读1——spark-submit应用提交整体流程">
+<meta property="og:url" content="http://yoursite.com/2019/05/23/Spark源码阅读1——spark-submit应用提交/index.html">
+<meta property="og:site_name" content="AlbertLee的博客">
+<meta property="og:description" content="1. spark-submit脚本 判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。 执行exec &amp;quot;${SPARK_HOME}&amp;quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &amp;quot;$@&amp;quot;命令，调用spark-class脚本。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-05-27T09:03:59.195Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark源码阅读1——spark-submit应用提交整体流程">
+<meta name="twitter:description" content="1. spark-submit脚本 判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。 执行exec &amp;quot;${SPARK_HOME}&amp;quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &amp;quot;$@&amp;quot;命令，调用spark-class脚本。">
+  
+    <link rel="alternative" href="/atom.xml" title="AlbertLee的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" type="text/css" href="/./main.4a39e8.css">
+  <style type="text/css">
+  
+    #container.show {
+      background: linear-gradient(200deg,#a0cfe4,#e8c37e);
+    }
+  </style><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+  
+
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div id="container" q-class="show:isCtnShow">
+    <canvas id="anm-canvas" class="anm-canvas"></canvas>
+    <div class="left-col" q-class="show:isShow">
+      
+<div class="overlay" style="background: #4d4d4d"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			<img src="https://raw.githubusercontent.com/AlbertLee7/raw.githubusercontent-blog-img/master/img/head.jpg" class="js-avatar">
+		</a>
+		<hgroup>
+		  <h1 class="header-author"><a href="/">AlbertLee</a></h1>
+		</hgroup>
+		
+		<p class="header-subtitle">前行的路上，点点滴滴……</p>
+		
+
+		<nav class="header-menu">
+			<ul>
+			
+				<li><a href="/">主页</a></li>
+	        
+				<li><a href="/tags/随笔/">随笔</a></li>
+	        
+			</ul>
+		</nav>
+		<nav class="header-smart-menu">
+    		
+    			
+    			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">友链</a>
+    			
+            
+    			
+    			<a q-on="click: openSlider(e, 'aboutme')" href="javascript:void(0)">关于我</a>
+    			
+            
+		</nav>
+		<nav class="header-nav">
+			<div class="social">
+				
+					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+		        
+					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+		        
+					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+		        
+					<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+		        
+			</div>
+		</nav>
+	</header>		
+</div>
+
+    </div>
+    <div class="mid-col" q-class="show:isShow,hide:isShow|isFalse">
+      
+<nav id="mobile-nav">
+  	<div class="overlay js-overlay" style="background: #4d4d4d"></div>
+	<div class="btnctn js-mobile-btnctn">
+  		<div class="slider-trigger list" q-on="click: openSlider(e)"><i class="icon icon-sort"></i></div>
+	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img src="https://raw.githubusercontent.com/AlbertLee7/raw.githubusercontent-blog-img/master/img/head.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author js-header-author">AlbertLee</h1>
+			</hgroup>
+			
+			<p class="header-subtitle"><i class="icon icon-quo-left"></i>前行的路上，点点滴滴……<i class="icon icon-quo-right"></i></p>
+			
+			
+			
+				
+			
+				
+			
+			
+			
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu"><i class="icon-zhihu"></i></a>
+			        
+				</div>
+			</nav>
+
+			<nav class="header-menu js-header-menu">
+				<ul style="width: 50%">
+				
+				
+					<li style="width: 50%"><a href="/">主页</a></li>
+		        
+					<li style="width: 50%"><a href="/tags/随笔/">随笔</a></li>
+		        
+				</ul>
+			</nav>
+		</header>				
+	</div>
+	<div class="mobile-mask" style="display:none" q-show="isShow"></div>
+</nav>
+
+      <div id="wrapper" class="body-wrap">
+        <div class="menu-l">
+          <div class="canvas-wrap">
+            <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
+          </div>
+          <div id="js-content" class="content-ll">
+            <article id="post-Spark源码阅读1——spark-submit应用提交" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Spark源码阅读1——spark-submit应用提交整体流程
+    </h1>
+  
+
+        
+        <a href="/2019/05/23/Spark源码阅读1——spark-submit应用提交/" class="archive-article-date">
+  	<time datetime="2019-05-23T12:37:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-spark-submit脚本"><a href="#1-spark-submit脚本" class="headerlink" title="1. spark-submit脚本"></a>1. spark-submit脚本</h2><ol>
+<li>判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。</li>
+<li>执行<code>exec &quot;${SPARK_HOME}&quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &quot;$@&quot;</code>命令，调用spark-class脚本。</li>
+</ol>
+<p>##2. spark-class脚本</p>
+<ol>
+<li>判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。</li>
+<li>执行load-spark-env.sh脚本，设置一些环境变量。</li>
+<li>检查java环境变量。</li>
+<li>检查${SPARK_HOME}中的jars。</li>
+<li>定义如下函数，解析spark-submit脚本传递的参数，并打印解析后的参数。函数中$RUNNER变量是java</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">build_command</span></span>() &#123;</span><br><span class="line">  <span class="string">"<span class="variable">$RUNNER</span>"</span> -Xmx128m -cp <span class="string">"<span class="variable">$LAUNCH_CLASSPATH</span>"</span> org.apache.spark.launcher.Main <span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line">  <span class="built_in">printf</span> <span class="string">"%d\0"</span> $?</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<ol start="6">
+<li>执行如下命令，将build_command函数解析后返回的参数赋值给CMD。</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> +o posix</span><br><span class="line">CMD=()</span><br><span class="line"><span class="keyword">while</span> IFS= <span class="built_in">read</span> -d <span class="string">''</span> -r ARG; <span class="keyword">do</span></span><br><span class="line">  CMD+=(<span class="string">"<span class="variable">$ARG</span>"</span>)</span><br><span class="line"><span class="keyword">done</span> &lt; &lt;(build_command <span class="string">"<span class="variable">$@</span>"</span>)</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li>执行CMD中的摸个参数类，若是提交应用程序，则参数类为：org.apache.spark.deploy.SparkSubmit。SparkSubmit参数类会完成启动Spark应用程序的工作。</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CMD=(<span class="string">"<span class="variable">$&#123;CMD[@]:0:$LAST&#125;</span>"</span>)</span><br><span class="line"><span class="built_in">exec</span> <span class="string">"<span class="variable">$&#123;CMD[@]&#125;</span>"</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-org-apache-spark-launcher-Main类"><a href="#3-org-apache-spark-launcher-Main类" class="headerlink" title="3. org.apache.spark.launcher.Main类"></a>3. org.apache.spark.launcher.Main类</h2><p>该类为Spark启动器的命令行接口，被Spark脚本内部使用，主要实现对传入参数的解析工作。最终打印出解析后的参数格式，类似于<code>java -cp 各种option 各种路径  org.apache.spark.deploy.SparkSubmit --master ..   --deploy-mode ..  --class 用户主类  其他参数</code></p>
+<p>###3.1 main方法</p>
+<ol>
+<li>main方法中将传入的第一个参数解析为className，若className为<code>org.apache.spark.deploy.SparkSubmit</code>类，则构建 <code>builder = new SparkSubmitCommandBuilder(args)</code>；否则构建<code>builder = new SparkClassCommandBUilder(className, args)</code>。</li>
+<li>构建builder后，执行<code>List&lt;String&gt; cmd = builder.buildCommand(env)</code>方法，获取解析后的命令行cmd。</li>
+<li>将cmd根据不同的运行环境(Windows/Linux)打印出来。spark-class脚本会根据<code>$?</code>获取到main方法最后打印的数据。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (isWindows()) &#123;</span><br><span class="line">  System.out.println(prepareWindowsCommand(cmd, env));</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="comment">// In bash, use NULL as the arg separator since it cannot be used in an argument.</span></span><br><span class="line">  List&lt;String&gt; bashCmd = prepareBashCommand(cmd, env);</span><br><span class="line">  <span class="keyword">for</span> (String c : bashCmd) &#123;</span><br><span class="line">    System.out.print(c);</span><br><span class="line">    System.out.print(<span class="string">'\0'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-org-apache-spark-launcher-SparkSubmitCommandBuilder类"><a href="#3-2-org-apache-spark-launcher-SparkSubmitCommandBuilder类" class="headerlink" title="3.2 org.apache.spark.launcher.SparkSubmitCommandBuilder类"></a>3.2 org.apache.spark.launcher.SparkSubmitCommandBuilder类</h3><ol>
+<li>该类的构造器中会调用<code>OptionParser</code>类的<code>parse(submitArgs)</code>方法，将传入的参数通过正则表达式<code>Pattern eqSeparatedOpt = Pattern.compile(&quot;(--[^=]+)=(.+)&quot;)</code>匹配后，调用<code>OptionParser的handle</code>方法，这个即可解析出master、deployMode、propertiesFile、driveMermory等参数。</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> boolean handle(<span class="type">String</span> opt, <span class="type">String</span> value) &#123;</span><br><span class="line">  <span class="keyword">if</span> (opt.equals(<span class="type">MASTER</span>)) &#123;</span><br><span class="line">    master = value;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">DEPLOY_MODE</span>)) &#123;</span><br><span class="line">    deployMode = value;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">PROPERTIES_FILE</span>)) &#123;</span><br><span class="line">    propertiesFile = value;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">DRIVER_MEMORY</span>)) &#123;</span><br><span class="line">    conf.put(<span class="type">SparkLauncher</span>.<span class="type">DRIVER_MEMORY</span>, value);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">DRIVER_JAVA_OPTIONS</span>)) &#123;</span><br><span class="line">    conf.put(<span class="type">SparkLauncher</span>.<span class="type">DRIVER_EXTRA_JAVA_OPTIONS</span>, value);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">DRIVER_LIBRARY_PATH</span>)) &#123;</span><br><span class="line">    conf.put(<span class="type">SparkLauncher</span>.<span class="type">DRIVER_EXTRA_LIBRARY_PATH</span>, value);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">DRIVER_CLASS_PATH</span>)) &#123;</span><br><span class="line">    conf.put(<span class="type">SparkLauncher</span>.<span class="type">DRIVER_EXTRA_CLASSPATH</span>, value);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">CONF</span>)) &#123;</span><br><span class="line">    <span class="type">String</span>[] setConf = value.split(<span class="string">"="</span>, <span class="number">2</span>);</span><br><span class="line">    checkArgument(setConf.length == <span class="number">2</span>, <span class="string">"Invalid argument to %s: %s"</span>, <span class="type">CONF</span>, value);</span><br><span class="line">    conf.put(setConf[<span class="number">0</span>], setConf[<span class="number">1</span>]);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">CLASS</span>)) &#123;</span><br><span class="line">    <span class="comment">// The special classes require some special command line handling, since they allow</span></span><br><span class="line">    <span class="comment">// mixing spark-submit arguments with arguments that should be propagated to the shell</span></span><br><span class="line">    <span class="comment">// itself. Note that for this to work, the "--class" argument must come before any</span></span><br><span class="line">    <span class="comment">// non-spark-submit arguments.</span></span><br><span class="line">    mainClass = value;</span><br><span class="line">    <span class="keyword">if</span> (specialClasses.containsKey(value)) &#123;</span><br><span class="line">      allowsMixedArguments = <span class="literal">true</span>;</span><br><span class="line">      appResource = specialClasses.get(value);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">KILL_SUBMISSION</span>) || opt.equals(<span class="type">STATUS</span>)) &#123;</span><br><span class="line">    isAppResourceReq = <span class="literal">false</span>;</span><br><span class="line">    sparkArgs.add(opt);</span><br><span class="line">    sparkArgs.add(value);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">HELP</span>) || opt.equals(<span class="type">USAGE_ERROR</span>)) &#123;</span><br><span class="line">    isAppResourceReq = <span class="literal">false</span>;</span><br><span class="line">    sparkArgs.add(opt);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (opt.equals(<span class="type">VERSION</span>)) &#123;</span><br><span class="line">    isAppResourceReq = <span class="literal">false</span>;</span><br><span class="line">    sparkArgs.add(opt);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    sparkArgs.add(opt);</span><br><span class="line">    <span class="keyword">if</span> (value != <span class="literal">null</span>) &#123;</span><br><span class="line">      sparkArgs.add(value);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li><code>buildSparkSubmitCommand(Map&lt;String, String&gt; env)</code>方法。</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">List</span>&lt;<span class="type">String</span>&gt; buildSparkSubmitCommand(<span class="type">Map</span>&lt;<span class="type">String</span>, <span class="type">String</span>&gt; env)</span><br><span class="line">    <span class="keyword">throws</span> <span class="type">IOException</span>, <span class="type">IllegalArgumentException</span> &#123;</span><br><span class="line">  <span class="comment">// Load the properties file and check whether spark-submit will be running the app's driver</span></span><br><span class="line">  <span class="comment">// or just launching a cluster app. When running the driver, the JVM's argument will be</span></span><br><span class="line">  <span class="comment">// modified to cover the driver's configuration.</span></span><br><span class="line">  <span class="type">Map</span>&lt;<span class="type">String</span>, <span class="type">String</span>&gt; config = getEffectiveConfig();</span><br><span class="line">  boolean isClientMode = isClientMode(config);</span><br><span class="line">  <span class="type">String</span> extraClassPath = isClientMode ? config.get(<span class="type">SparkLauncher</span>.<span class="type">DRIVER_EXTRA_CLASSPATH</span>) : <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="type">List</span>&lt;<span class="type">String</span>&gt; cmd = buildJavaCommand(extraClassPath);</span><br><span class="line">  <span class="comment">// Take Thrift Server as daemon</span></span><br><span class="line">  <span class="keyword">if</span> (isThriftServer(mainClass)) &#123;</span><br><span class="line">    addOptionString(cmd, <span class="type">System</span>.getenv(<span class="string">"SPARK_DAEMON_JAVA_OPTS"</span>));</span><br><span class="line">  &#125;</span><br><span class="line">  addOptionString(cmd, <span class="type">System</span>.getenv(<span class="string">"SPARK_SUBMIT_OPTS"</span>));</span><br><span class="line">  addOptionString(cmd, <span class="type">System</span>.getenv(<span class="string">"SPARK_JAVA_OPTS"</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">// We don't want the client to specify Xmx. These have to be set by their corresponding</span></span><br><span class="line">  <span class="comment">// memory flag --driver-memory or configuration entry spark.driver.memory</span></span><br><span class="line">  <span class="type">String</span> driverExtraJavaOptions = config.get(<span class="type">SparkLauncher</span>.<span class="type">DRIVER_EXTRA_JAVA_OPTIONS</span>);</span><br><span class="line">  <span class="keyword">if</span> (!isEmpty(driverExtraJavaOptions) &amp;&amp; driverExtraJavaOptions.contains(<span class="string">"Xmx"</span>)) &#123;</span><br><span class="line">    <span class="type">String</span> msg = <span class="type">String</span>.format(<span class="string">"Not allowed to specify max heap(Xmx) memory settings through "</span> +</span><br><span class="line">                 <span class="string">"java options (was %s). Use the corresponding --driver-memory or "</span> +</span><br><span class="line">                 <span class="string">"spark.driver.memory configuration instead."</span>, driverExtraJavaOptions);</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">IllegalArgumentException</span>(msg);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (isClientMode) &#123;</span><br><span class="line">    <span class="comment">// Figuring out where the memory value come from is a little tricky due to precedence.</span></span><br><span class="line">    <span class="comment">// Precedence is observed in the following order:</span></span><br><span class="line">    <span class="comment">// - explicit configuration (setConf()), which also covers --driver-memory cli argument.</span></span><br><span class="line">    <span class="comment">// - properties file.</span></span><br><span class="line">    <span class="comment">// - SPARK_DRIVER_MEMORY env variable</span></span><br><span class="line">    <span class="comment">// - SPARK_MEM env variable</span></span><br><span class="line">    <span class="comment">// - default value (1g)</span></span><br><span class="line">    <span class="comment">// Take Thrift Server as daemon</span></span><br><span class="line">    <span class="type">String</span> tsMemory =</span><br><span class="line">      isThriftServer(mainClass) ? <span class="type">System</span>.getenv(<span class="string">"SPARK_DAEMON_MEMORY"</span>) : <span class="literal">null</span>;</span><br><span class="line">    <span class="type">String</span> memory = firstNonEmpty(tsMemory, config.get(<span class="type">SparkLauncher</span>.<span class="type">DRIVER_MEMORY</span>),</span><br><span class="line">      <span class="type">System</span>.getenv(<span class="string">"SPARK_DRIVER_MEMORY"</span>), <span class="type">System</span>.getenv(<span class="string">"SPARK_MEM"</span>), <span class="type">DEFAULT_MEM</span>);</span><br><span class="line">    cmd.add(<span class="string">"-Xmx"</span> + memory);</span><br><span class="line">    addOptionString(cmd, driverExtraJavaOptions);</span><br><span class="line">    mergeEnvPathList(env, getLibPathEnvName(),</span><br><span class="line">      config.get(<span class="type">SparkLauncher</span>.<span class="type">DRIVER_EXTRA_LIBRARY_PATH</span>));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  addPermGenSizeOpt(cmd);</span><br><span class="line">  cmd.add(<span class="string">"org.apache.spark.deploy.SparkSubmit"</span>);</span><br><span class="line">  cmd.addAll(buildSparkSubmitArgs());</span><br><span class="line">  <span class="keyword">return</span> cmd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>该方法首先根据propertiesFile参数加载配置文件中的对应配置项，若propertiesFile为null，则从默认的配置文件<code>spark-defaults.conf</code>中加载。其中<code>spark-defaults.conf</code>从<code>SPARK_CONF_DIR</code>或<code>SPARK_HOME/conf</code>中获取。</li>
+<li>调用<code>buildJavaCommand(extraClassPath)</code>方法，该方法会构建一个运行java程序的参数列表。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">List&lt;String&gt; <span class="title">buildJavaCommand</span><span class="params">(String extraClassPath)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">  List&lt;String&gt; cmd = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">  String envJavaHome;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (javaHome != <span class="keyword">null</span>) &#123;</span><br><span class="line">    cmd.add(join(File.separator, javaHome, <span class="string">"bin"</span>, <span class="string">"java"</span>));</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> ((envJavaHome = System.getenv(<span class="string">"JAVA_HOME"</span>)) != <span class="keyword">null</span>) &#123;</span><br><span class="line">      cmd.add(join(File.separator, envJavaHome, <span class="string">"bin"</span>, <span class="string">"java"</span>));</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      cmd.add(join(File.separator, System.getProperty(<span class="string">"java.home"</span>), <span class="string">"bin"</span>, <span class="string">"java"</span>));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Load extra JAVA_OPTS from conf/java-opts, if it exists.</span></span><br><span class="line">  File javaOpts = <span class="keyword">new</span> File(join(File.separator, getConfDir(), <span class="string">"java-opts"</span>));</span><br><span class="line">  <span class="keyword">if</span> (javaOpts.isFile()) &#123;</span><br><span class="line">    BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(</span><br><span class="line">        <span class="keyword">new</span> FileInputStream(javaOpts), StandardCharsets.UTF_8));</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      String line;</span><br><span class="line">      <span class="keyword">while</span> ((line = br.readLine()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">        addOptionString(cmd, line);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      br.close();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  cmd.add(<span class="string">"-cp"</span>);</span><br><span class="line">  cmd.add(join(File.pathSeparator, buildClassPath(extraClassPath)));</span><br><span class="line">  <span class="keyword">return</span> cmd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>List&lt;String&gt; cmd</code>构建好以后，cmd中已经有了java -cp等运行java的命令参数，后面添加<code>-Xmx memory</code>、<code>spark.driver.extraJavaOptions</code>、<code>spark.driver.extraLibraryPath</code>等额外参数，最后添加<code>org.apache.spark.deploy.SparkSubmit</code>和调用buildSparkSubmitArgs()方法，添加SparkSubmit相应的参数，包括–master、–deployMode、–conf、–class和用户程序对应的传入参数。</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">List</span>&lt;<span class="type">String</span>&gt; buildSparkSubmitArgs() &#123;</span><br><span class="line">  <span class="type">List</span>&lt;<span class="type">String</span>&gt; args = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;();</span><br><span class="line">  <span class="type">SparkSubmitOptionParser</span> parser = <span class="keyword">new</span> <span class="type">SparkSubmitOptionParser</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!allowsMixedArguments &amp;&amp; isAppResourceReq) &#123;</span><br><span class="line">    checkArgument(appResource != <span class="literal">null</span>, <span class="string">"Missing application resource."</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (verbose) &#123;</span><br><span class="line">    args.add(parser.<span class="type">VERBOSE</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (master != <span class="literal">null</span>) &#123;</span><br><span class="line">    args.add(parser.<span class="type">MASTER</span>);</span><br><span class="line">    args.add(master);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (deployMode != <span class="literal">null</span>) &#123;</span><br><span class="line">    args.add(parser.<span class="type">DEPLOY_MODE</span>);</span><br><span class="line">    args.add(deployMode);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (appName != <span class="literal">null</span>) &#123;</span><br><span class="line">    args.add(parser.<span class="type">NAME</span>);</span><br><span class="line">    args.add(appName);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="type">Map</span>.<span class="type">Entry</span>&lt;<span class="type">String</span>, <span class="type">String</span>&gt; e : conf.entrySet()) &#123;</span><br><span class="line">    args.add(parser.<span class="type">CONF</span>);</span><br><span class="line">    args.add(<span class="type">String</span>.format(<span class="string">"%s=%s"</span>, e.getKey(), e.getValue()));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (propertiesFile != <span class="literal">null</span>) &#123;</span><br><span class="line">    args.add(parser.<span class="type">PROPERTIES_FILE</span>);</span><br><span class="line">    args.add(propertiesFile);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (isExample) &#123;</span><br><span class="line">    jars.addAll(findExamplesJars());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!jars.isEmpty()) &#123;</span><br><span class="line">    args.add(parser.<span class="type">JARS</span>);</span><br><span class="line">    args.add(join(<span class="string">","</span>, jars));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!files.isEmpty()) &#123;</span><br><span class="line">    args.add(parser.<span class="type">FILES</span>);</span><br><span class="line">    args.add(join(<span class="string">","</span>, files));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!pyFiles.isEmpty()) &#123;</span><br><span class="line">    args.add(parser.<span class="type">PY_FILES</span>);</span><br><span class="line">    args.add(join(<span class="string">","</span>, pyFiles));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (isAppResourceReq) &#123;</span><br><span class="line">    checkArgument(!isExample || mainClass != <span class="literal">null</span>, <span class="string">"Missing example class name."</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (mainClass != <span class="literal">null</span>) &#123;</span><br><span class="line">    args.add(parser.<span class="type">CLASS</span>);</span><br><span class="line">    args.add(mainClass);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  args.addAll(sparkArgs);</span><br><span class="line">  <span class="keyword">if</span> (appResource != <span class="literal">null</span>) &#123;</span><br><span class="line">    args.add(appResource);</span><br><span class="line">  &#125;</span><br><span class="line">  args.addAll(appArgs);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> args;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中<code>sparkArgs</code>是<code>SparkSubmitCommandBuilder</code>类未解析的spark相应配置，如–executor-memory等参数。<code>appArgs</code>为用户主类需要用到的参数。</p>
+<h2 id="4-org-apache-spark-deploy-SparkSubmit类"><a href="#4-org-apache-spark-deploy-SparkSubmit类" class="headerlink" title="4. org.apache.spark.deploy.SparkSubmit类"></a>4. org.apache.spark.deploy.SparkSubmit类</h2><p>spark-class脚本中最后会执行<code>exec java -cp ...  org.apache.spark.deploy.SparkSubmit  ...</code>来运行SparkSubmit类。该类是启动Spark Application的主入口。</p>
+<h3 id="4-1-main方法"><a href="#4-1-main方法" class="headerlink" title="4.1 main方法"></a>4.1 main方法</h3><p>该方法首先会根据传入的<code>args</code>创建<code>SparkSubmitArguments对象appArgs</code>，然后根据<code>appArgs.action</code>的不同值调用相应的<code>submit(appArgs)</code>、<code>kill(appArgs)</code>、<code>requestStatus(appArgs)</code>方法，后两种方法只<code>standalone</code>和<code>Mesos cluster</code>模式下支持。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">  <span class="keyword">val</span> appArgs = <span class="keyword">new</span> <span class="type">SparkSubmitArguments</span>(args)</span><br><span class="line">  <span class="keyword">if</span> (appArgs.verbose) &#123;</span><br><span class="line">    <span class="comment">// scalastyle:off println</span></span><br><span class="line">    printStream.println(appArgs)</span><br><span class="line">    <span class="comment">// scalastyle:on println</span></span><br><span class="line">  &#125;</span><br><span class="line">  appArgs.action <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">SparkSubmitAction</span>.<span class="type">SUBMIT</span> =&gt; submit(appArgs)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">SparkSubmitAction</span>.<span class="type">KILL</span> =&gt; kill(appArgs)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">SparkSubmitAction</span>.<span class="type">REQUEST_STATUS</span> =&gt; requestStatus(appArgs)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-2-SparkSubmitArguments类"><a href="#4-2-SparkSubmitArguments类" class="headerlink" title="4.2  SparkSubmitArguments类"></a>4.2  SparkSubmitArguments类</h3><p>该类包含了运行Spark Application所需要的参数。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> master: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> deployMode: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> executorMemory: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> executorCores: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> totalExecutorCores: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> propertiesFile: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> driverMemory: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> driverExtraClassPath: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> driverExtraLibraryPath: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> driverExtraJavaOptions: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> queue: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> numExecutors: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> files: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> archives: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> mainClass: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> primaryResource: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> name: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> childArgs: <span class="type">ArrayBuffer</span>[<span class="type">String</span>] = <span class="keyword">new</span> <span class="type">ArrayBuffer</span>[<span class="type">String</span>]()</span><br><span class="line"><span class="keyword">var</span> jars: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> packages: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> repositories: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> ivyRepoPath: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> packagesExclusions: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> verbose: <span class="type">Boolean</span> = <span class="literal">false</span></span><br><span class="line"><span class="keyword">var</span> isPython: <span class="type">Boolean</span> = <span class="literal">false</span></span><br><span class="line"><span class="keyword">var</span> pyFiles: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> isR: <span class="type">Boolean</span> = <span class="literal">false</span></span><br><span class="line"><span class="keyword">var</span> action: <span class="type">SparkSubmitAction</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">val</span> sparkProperties: <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">String</span>] = <span class="keyword">new</span> <span class="type">HashMap</span>[<span class="type">String</span>, <span class="type">String</span>]()</span><br><span class="line"><span class="keyword">var</span> proxyUser: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> principal: <span class="type">String</span> = <span class="literal">null</span></span><br><span class="line"><span class="keyword">var</span> keytab: <span class="type">String</span> = <span class="literal">null</span></span><br></pre></td></tr></table></figure>
+<p><code>SparkSubmitArguments</code>类的构造器中，一次调用了下面五种方法，最终将所有需要使用到的参数都解析到了<code>SparkSubmitArguments</code>类相应的字段中：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set parameters from command line arguments</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  parse(args.asJava)</span><br><span class="line">&#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">  <span class="keyword">case</span> e: <span class="type">IllegalArgumentException</span> =&gt;</span><br><span class="line">    <span class="type">SparkSubmit</span>.printErrorAndExit(e.getMessage())</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Populate `sparkProperties` map from properties file</span></span><br><span class="line">mergeDefaultSparkProperties()</span><br><span class="line"><span class="comment">// Remove keys that don't start with "spark." from `sparkProperties`.</span></span><br><span class="line">ignoreNonSparkProperties()</span><br><span class="line"><span class="comment">// Use `sparkProperties` map along with env vars to fill in any missing parameters</span></span><br><span class="line">loadEnvironmentArguments()</span><br><span class="line"></span><br><span class="line">validateArguments()</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-1-parse-args-asJava-方法"><a href="#4-2-1-parse-args-asJava-方法" class="headerlink" title="4.2.1 parse(args.asJava)方法"></a>4.2.1 parse(args.asJava)方法</h4><p><code>SparkSubmitOptionParser类的parse(submitArgs)</code>方法，将传入的参数通过正则表达式<code>Pattern eqSeparatedOpt = Pattern.compile(&quot;(--[^=]+)=(.+)&quot;)</code>匹配后，调用<code>SparkSubmitArguments的handle</code>方法，使用Scala的模式匹配从<code>submitArgs</code>中解析出相应参数并赋值给<code>SparkSubmitArguments</code>的相应字段，其中用户主类对应的参数存放在<code>SparkSubmitArguments的childArgs</code>字段中。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Fill in values by parsing user options. */</span></span><br><span class="line"><span class="keyword">override</span> <span class="keyword">protected</span> <span class="function"><span class="keyword">def</span> <span class="title">handle</span></span>(opt: <span class="type">String</span>, value: <span class="type">String</span>): <span class="type">Boolean</span> = &#123;</span><br><span class="line">  opt <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">NAME</span> =&gt;</span><br><span class="line">      name = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="type">MASTER</span> =&gt;</span><br><span class="line">      master = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="type">CLASS</span> =&gt;</span><br><span class="line">      mainClass = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="type">DEPLOY_MODE</span> =&gt;</span><br><span class="line">      <span class="keyword">if</span> (value != <span class="string">"client"</span> &amp;&amp; value != <span class="string">"cluster"</span>) &#123;</span><br><span class="line">        <span class="type">SparkSubmit</span>.printErrorAndExit(<span class="string">"--deploy-mode must be either \"client\" or \"cluster\""</span>)</span><br><span class="line">      &#125;</span><br><span class="line">      deployMode = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="type">NUM_EXECUTORS</span> =&gt;</span><br><span class="line">      numExecutors = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="type">TOTAL_EXECUTOR_CORES</span> =&gt;</span><br><span class="line">      totalExecutorCores = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="type">EXECUTOR_CORES</span> =&gt;</span><br><span class="line">      executorCores = value</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> <span class="type">EXECUTOR_MEMORY</span> =&gt;</span><br><span class="line">      executorMemory = value</span><br><span class="line">    ......</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line">    <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>####4.2.2 mergeDefaultSparkProperties()方法</p>
+<p><code>sparkProperties</code>已经在前面的handle方法中将用户<code>--conf</code>命令提交的相关配置加载过，<code>mergeDefaultSparkProperties()</code>主要完成加载<code>propertiesFile</code>配置文件中的相关配置，若<code>propertiesFile</code>没有配置则使用默认的<code>spark-default.conf</code>。需要注意的是<code>sparkProperties</code>已经在<code>—conf</code>配置过的数据不会被覆盖，即<code>--conf</code>比配置文件的优先级高。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Merge values from the default properties file with those specified through --conf.</span></span><br><span class="line"><span class="comment"> * When this is called, `sparkProperties` is already filled with configs from the latter.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">mergeDefaultSparkProperties</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">  <span class="comment">// Use common defaults file, if not specified by user</span></span><br><span class="line">  propertiesFile = <span class="type">Option</span>(propertiesFile).getOrElse(<span class="type">Utils</span>.getDefaultPropertiesFile(env))</span><br><span class="line">  <span class="comment">// Honor --conf before the defaults file</span></span><br><span class="line">  defaultSparkProperties.foreach &#123; <span class="keyword">case</span> (k, v) =&gt;</span><br><span class="line">    <span class="comment">// sparkProperties之前已经在--conf中配置过的数据不会被覆盖</span></span><br><span class="line">    <span class="keyword">if</span> (!sparkProperties.contains(k)) &#123;</span><br><span class="line">      sparkProperties(k) = v</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-3-ignoreNonSparkProperties"><a href="#4-2-3-ignoreNonSparkProperties" class="headerlink" title="4.2.3 ignoreNonSparkProperties()"></a>4.2.3 ignoreNonSparkProperties()</h4><p>该方法主要是去除掉<code>sparkProperties</code>中不是<code>spark.</code>开头的无效配置项。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Remove keys that don't start with "spark." from `sparkProperties`.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">ignoreNonSparkProperties</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">  sparkProperties.foreach &#123; <span class="keyword">case</span> (k, v) =&gt;</span><br><span class="line">    <span class="keyword">if</span> (!k.startsWith(<span class="string">"spark."</span>)) &#123;</span><br><span class="line">      sparkProperties -= k</span><br><span class="line">      <span class="type">SparkSubmit</span>.printWarning(<span class="string">s"Ignoring non-spark config property: <span class="subst">$k</span>=<span class="subst">$v</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-4-loadEnvironmentArguments"><a href="#4-2-4-loadEnvironmentArguments" class="headerlink" title="4.2.4 loadEnvironmentArguments()"></a>4.2.4 loadEnvironmentArguments()</h4><p>该方法主要对<code>SparkSubmitArguments</code>类中的一些必备的字段进行验证，若该字段未设置，则从<code>sparkProperties</code>中提取，若<code>sparkProperties</code>中不存在，则从环境变量中取，若仍然不存在，则取Null或相应的默认值。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * Load arguments from environment variables, Spark properties etc.</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">loadEnvironmentArguments</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">   master = <span class="type">Option</span>(master)</span><br><span class="line">     .orElse(sparkProperties.get(<span class="string">"spark.master"</span>))</span><br><span class="line">     .orElse(env.get(<span class="string">"MASTER"</span>))</span><br><span class="line">     .orNull</span><br><span class="line">   driverExtraClassPath = <span class="type">Option</span>(driverExtraClassPath)</span><br><span class="line">     .orElse(sparkProperties.get(<span class="string">"spark.driver.extraClassPath"</span>))</span><br><span class="line">     .orNull</span><br><span class="line">   driverExtraJavaOptions = <span class="type">Option</span>(driverExtraJavaOptions)</span><br><span class="line">     .orElse(sparkProperties.get(<span class="string">"spark.driver.extraJavaOptions"</span>))</span><br><span class="line">     .orNull</span><br><span class="line">   ......</span><br><span class="line">   ......</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-5-validateArguments-方法"><a href="#4-2-5-validateArguments-方法" class="headerlink" title="4.2.5 validateArguments()方法"></a>4.2.5 validateArguments()方法</h4><p>该方法用来确保所有要求的字段存在。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Ensure that required fields exists. Call this only once all defaults are loaded. */</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">validateArguments</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">  action <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">SUBMIT</span> =&gt; validateSubmitArguments()</span><br><span class="line">    <span class="keyword">case</span> <span class="type">KILL</span> =&gt; validateKillArguments()</span><br><span class="line">    <span class="keyword">case</span> <span class="type">REQUEST_STATUS</span> =&gt; validateStatusRequestArguments()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">validateSubmitArguments</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">   <span class="keyword">if</span> (args.length == <span class="number">0</span>) &#123;</span><br><span class="line">     printUsageAndExit(<span class="number">-1</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> (primaryResource == <span class="literal">null</span>) &#123;</span><br><span class="line">     <span class="type">SparkSubmit</span>.printErrorAndExit(<span class="string">"Must specify a primary resource (JAR or Python or R file)"</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> (mainClass == <span class="literal">null</span> &amp;&amp; <span class="type">SparkSubmit</span>.isUserJar(primaryResource)) &#123;</span><br><span class="line">     <span class="type">SparkSubmit</span>.printErrorAndExit(<span class="string">"No main class set in JAR; please specify one with --class"</span>)</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">if</span> (pyFiles != <span class="literal">null</span> &amp;&amp; !isPython) &#123;</span><br><span class="line">     <span class="type">SparkSubmit</span>.printErrorAndExit(<span class="string">"--py-files given but primary resource is not a Python script"</span>)</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (master.startsWith(<span class="string">"yarn"</span>)) &#123;</span><br><span class="line">     <span class="keyword">val</span> hasHadoopEnv = env.contains(<span class="string">"HADOOP_CONF_DIR"</span>) || env.contains(<span class="string">"YARN_CONF_DIR"</span>)</span><br><span class="line">     <span class="keyword">if</span> (!hasHadoopEnv &amp;&amp; !<span class="type">Utils</span>.isTesting) &#123;</span><br><span class="line">       <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Exception</span>(<span class="string">s"When running with master '<span class="subst">$master</span>' "</span> +</span><br><span class="line">         <span class="string">"either HADOOP_CONF_DIR or YARN_CONF_DIR must be set in the environment."</span>)</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (proxyUser != <span class="literal">null</span> &amp;&amp; principal != <span class="literal">null</span>) &#123;</span><br><span class="line">     <span class="type">SparkSubmit</span>.printErrorAndExit(<span class="string">"Only one of --proxy-user or --principal can be provided."</span>)</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-3-submit-args-SparkSubmitArguments-方法"><a href="#4-3-submit-args-SparkSubmitArguments-方法" class="headerlink" title="4.3 submit(args:SparkSubmitArguments)方法"></a>4.3 submit(args:SparkSubmitArguments)方法</h3><p>在将传入的args字符串数组构造成<code>SparkSubmitArguments对象appArgs</code>后调用submit(appArgs)方法。该方法根据提供的参数，提交Spark Application。主要分为两步：第一步是为main class准备启动环境，包含设置相应的classpath、sysytem properties、application arguments等，第二步是使用反射机制运行main class的main方法。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Submit the application using the provided parameters.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * This runs in two steps. First, we prepare the launch environment by setting up</span></span><br><span class="line"><span class="comment"> * the appropriate classpath, system properties, and application arguments for</span></span><br><span class="line"><span class="comment"> * running the child main class based on the cluster manager and the deploy mode.</span></span><br><span class="line"><span class="comment"> * Second, we use this launch environment to invoke the main method of the child</span></span><br><span class="line"><span class="comment"> * main class.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@tailrec</span></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">submit</span></span>(args: <span class="type">SparkSubmitArguments</span>): <span class="type">Unit</span> = &#123;</span><br><span class="line">  <span class="keyword">val</span> (childArgs, childClasspath, sysProps, childMainClass) = prepareSubmitEnvironment(args)</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">doRunMain</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (args.proxyUser != <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">val</span> proxyUser = <span class="type">UserGroupInformation</span>.createProxyUser(args.proxyUser,</span><br><span class="line">        <span class="type">UserGroupInformation</span>.getCurrentUser())</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        proxyUser.doAs(<span class="keyword">new</span> <span class="type">PrivilegedExceptionAction</span>[<span class="type">Unit</span>]() &#123;</span><br><span class="line">          <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>(): <span class="type">Unit</span> = &#123;</span><br><span class="line">            runMain(childArgs, childClasspath, sysProps, childMainClass, args.verbose)</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> e: <span class="type">Exception</span> =&gt;</span><br><span class="line">          <span class="comment">// Hadoop's AuthorizationException suppresses the exception's stack trace, which</span></span><br><span class="line">          <span class="comment">// makes the message printed to the output by the JVM not very helpful. Instead,</span></span><br><span class="line">          <span class="comment">// detect exceptions with empty stack traces here, and treat them differently.</span></span><br><span class="line">          <span class="keyword">if</span> (e.getStackTrace().length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// scalastyle:off println</span></span><br><span class="line">            printStream.println(<span class="string">s"ERROR: <span class="subst">$&#123;e.getClass().getName()&#125;</span>: <span class="subst">$&#123;e.getMessage()&#125;</span>"</span>)</span><br><span class="line">            <span class="comment">// scalastyle:on println</span></span><br><span class="line">            exitFn(<span class="number">1</span>)</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> e</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      runMain(childArgs, childClasspath, sysProps, childMainClass, args.verbose)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// In standalone cluster mode, there are two submission gateways:</span></span><br><span class="line">   <span class="comment">//   (1) The traditional RPC gateway using o.a.s.deploy.Client as a wrapper</span></span><br><span class="line">   <span class="comment">//   (2) The new REST-based gateway introduced in Spark 1.3</span></span><br><span class="line">   <span class="comment">// The latter is the default behavior as of Spark 1.3, but Spark submit will fail over</span></span><br><span class="line">   <span class="comment">// to use the legacy gateway if the master endpoint turns out to be not a REST server.</span></span><br><span class="line">  <span class="keyword">if</span> (args.isStandaloneCluster &amp;&amp; args.useRest) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="comment">// scalastyle:off println</span></span><br><span class="line">      printStream.println(<span class="string">"Running Spark using the REST application submission protocol."</span>)</span><br><span class="line">      <span class="comment">// scalastyle:on println</span></span><br><span class="line">      doRunMain()</span><br><span class="line">    &#125; <span class="keyword">catch</span> &#123;</span><br><span class="line">      <span class="comment">// Fail over to use the legacy submission gateway</span></span><br><span class="line">      <span class="keyword">case</span> e: <span class="type">SubmitRestConnectionException</span> =&gt;</span><br><span class="line">        printWarning(<span class="string">s"Master endpoint <span class="subst">$&#123;args.master&#125;</span> was not a REST server. "</span> +</span><br><span class="line">          <span class="string">"Falling back to legacy submission gateway instead."</span>)</span><br><span class="line">        args.useRest = <span class="literal">false</span></span><br><span class="line">        submit(args)</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="comment">// In all other modes, just run the main class as prepared</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    doRunMain()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="4-3-1-prepareSubmitEnvironment-args-方法"><a href="#4-3-1-prepareSubmitEnvironment-args-方法" class="headerlink" title="4.3.1 prepareSubmitEnvironment(args)方法"></a>4.3.1 prepareSubmitEnvironment(args)方法</h4><p>该方法是为提交spark application准备环境，返回4种数据：1. childArgs——子进程参数；2.childClasspath——子进程类路径列表；3. sysProps——sysytem properties map；4. childMainClass——子进程主类。</p>
+<p>该方法会根据args判断用户设定的<code>master</code>、<code>deployMode</code>等，根据用户要求的运行模式准备相应的运行环境。其中也会根据不同的master设置不同的childMainClass。比如Client模式下会直接将<code>childMainClass=args.mainClass</code>；YarnCluster模式下，会将<code>childMainClass = &quot;org.apache.spark.deploy.yarn.Client&quot;</code>，将用户的主类通过<code>childArgs += (&quot;--class&quot;, args.mainClass)</code>设置。同时也会把用户传入的jar包，添加到<code>chlidClasspath</code>中。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line">......</span><br><span class="line"><span class="comment">// In client mode, launch the application main class directly</span></span><br><span class="line">    <span class="comment">// In addition, add the main application jar and any added jars (if any) to the classpath</span></span><br><span class="line">    <span class="comment">// Also add the main application jar and any added jars to classpath in case YARN client</span></span><br><span class="line">    <span class="comment">// requires these jars.</span></span><br><span class="line">    <span class="keyword">if</span> (deployMode == <span class="type">CLIENT</span> || isYarnCluster) &#123;</span><br><span class="line">      childMainClass = args.mainClass</span><br><span class="line">      <span class="keyword">if</span> (isUserJar(args.primaryResource)) &#123;</span><br><span class="line">        childClasspath += args.primaryResource</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (args.jars != <span class="literal">null</span>) &#123; childClasspath ++= args.jars.split(<span class="string">","</span>) &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (deployMode == <span class="type">CLIENT</span>) &#123;</span><br><span class="line">      <span class="keyword">if</span> (args.childArgs != <span class="literal">null</span>) &#123; childArgs ++= args.childArgs &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// In yarn-cluster mode, use yarn.Client as a wrapper around the user class</span></span><br><span class="line">    <span class="keyword">if</span> (isYarnCluster) &#123;</span><br><span class="line">      childMainClass = <span class="string">"org.apache.spark.deploy.yarn.Client"</span></span><br><span class="line">      <span class="keyword">if</span> (args.isPython) &#123;</span><br><span class="line">        childArgs += (<span class="string">"--primary-py-file"</span>, args.primaryResource)</span><br><span class="line">        childArgs += (<span class="string">"--class"</span>, <span class="string">"org.apache.spark.deploy.PythonRunner"</span>)</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (args.isR) &#123;</span><br><span class="line">        <span class="keyword">val</span> mainFile = <span class="keyword">new</span> <span class="type">Path</span>(args.primaryResource).getName</span><br><span class="line">        childArgs += (<span class="string">"--primary-r-file"</span>, mainFile)</span><br><span class="line">        childArgs += (<span class="string">"--class"</span>, <span class="string">"org.apache.spark.deploy.RRunner"</span>)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (args.primaryResource != <span class="type">SparkLauncher</span>.<span class="type">NO_RESOURCE</span>) &#123;</span><br><span class="line">          childArgs += (<span class="string">"--jar"</span>, args.primaryResource)</span><br><span class="line">        &#125;</span><br><span class="line">        childArgs += (<span class="string">"--class"</span>, args.mainClass)</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (args.childArgs != <span class="literal">null</span>) &#123;</span><br><span class="line">        args.childArgs.foreach &#123; arg =&gt; childArgs += (<span class="string">"--arg"</span>, arg) &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">......</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<h4 id="4-3-2-runMain-childArgs-childClasspath-sysProps-childMainClass-verbose-方法"><a href="#4-3-2-runMain-childArgs-childClasspath-sysProps-childMainClass-verbose-方法" class="headerlink" title="4.3.2 runMain(childArgs, childClasspath, sysProps, childMainClass, verbose)方法"></a>4.3.2 runMain(childArgs, childClasspath, sysProps, childMainClass, verbose)方法</h4><p>该方法使用反射机制启动<code>childMainClass</code>中的main方法。需要特别注意的是，从上一步也可以了解到，当运行在cluster deploy mode或python application时，<code>childMainClass</code>并不是用户提供的主类。如<code>YarnCluster</code>模式下<code>childMainClass = &quot;org.apache.spark.deploy.yarn.Client&quot;</code>。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置类加载器</span></span><br><span class="line"><span class="keyword">val</span> loader =</span><br><span class="line">      <span class="keyword">if</span> (sysProps.getOrElse(<span class="string">"spark.driver.userClassPathFirst"</span>, <span class="string">"false"</span>).toBoolean) &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="type">ChildFirstURLClassLoader</span>(<span class="keyword">new</span> <span class="type">Array</span>[<span class="type">URL</span>](<span class="number">0</span>),</span><br><span class="line">          <span class="type">Thread</span>.currentThread.getContextClassLoader)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="type">MutableURLClassLoader</span>(<span class="keyword">new</span> <span class="type">Array</span>[<span class="type">URL</span>](<span class="number">0</span>),</span><br><span class="line">          <span class="type">Thread</span>.currentThread.getContextClassLoader)</span><br><span class="line">      &#125;</span><br><span class="line">    <span class="type">Thread</span>.currentThread.setContextClassLoader(loader)</span><br><span class="line">	<span class="comment">// 根据已经设置的childClasspath，将对应的jar包文件路径配置到类加载器的加载路径中</span></span><br><span class="line">    <span class="keyword">for</span> (jar &lt;- childClasspath) &#123;</span><br><span class="line">      addJarToClasspath(jar, loader)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 根据已经设置的sysProps，配置系统参数</span></span><br><span class="line">    <span class="keyword">for</span> ((key, value) &lt;- sysProps) &#123;</span><br><span class="line">      <span class="type">System</span>.setProperty(key, value)</span><br><span class="line">    &#125;</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line"><span class="comment">// 根据childMainClass获取主类</span></span><br><span class="line">mainClass = <span class="type">Utils</span>.classForName(childMainClass)</span><br><span class="line">......</span><br><span class="line">......</span><br><span class="line"><span class="comment">// 利用反射机制获取mainClass中的主方法mainMethond，并启动主方法。</span></span><br><span class="line"><span class="keyword">val</span> mainMethod = mainClass.getMethod(<span class="string">"main"</span>, <span class="keyword">new</span> <span class="type">Array</span>[<span class="type">String</span>](<span class="number">0</span>).getClass)</span><br><span class="line">mainMethod.invoke(<span class="literal">null</span>, childArgs.toArray)</span><br></pre></td></tr></table></figure>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=http://yoursite.com/2019/05/23/Spark源码阅读1——spark-submit应用提交/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2019/05/27/Spark源码阅读3——SparkContext初始化流程/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Spark源码阅读1——spark-submit应用提交整体流程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/07/22/《统计学习方法6——Logistic回归与最大熵模型》/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">《统计学习方法6——Logistic回归与最大熵模型》</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+    <div class="duoshuo"></div>
+  
+
+
+
+<section id="comments">
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'albertlee'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+
+
+          </div>
+        </div>
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2019 AlbertLee
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    <script>
+	var yiliaConfig = {
+		mathjax: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false,
+		root: "/",
+		innerArchive: true,
+		showTags: false
+	}
+</script>
+
+<script>!function(t){function n(r){if(e[r])return e[r].exports;var o=e[r]={exports:{},id:r,loaded:!1};return t[r].call(o.exports,o,o.exports,n),o.loaded=!0,o.exports}var e={};return n.m=t,n.c=e,n.p="./",n(0)}([function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function o(t,n){var e=/\/|index.html/g;return t.replace(e,"")===n.replace(e,"")}function i(){for(var t=document.querySelectorAll(".js-header-menu li a"),n=window.location.pathname,e=0,r=t.length;e<r;e++){var i=t[e];o(n,i.getAttribute("href"))&&(0,d.default)(i,"active")}}function u(t){for(var n=t.offsetLeft,e=t.offsetParent;null!==e;)n+=e.offsetLeft,e=e.offsetParent;return n}function f(t){for(var n=t.offsetTop,e=t.offsetParent;null!==e;)n+=e.offsetTop,e=e.offsetParent;return n}function c(t,n,e,r,o){var i=u(t),c=f(t)-n;if(c-e<=o){var a=t.$newDom;a||(a=t.cloneNode(!0),(0,h.default)(t,a),t.$newDom=a,a.style.position="fixed",a.style.top=(e||c)+"px",a.style.left=i+"px",a.style.zIndex=r||2,a.style.width="100%",a.style.color="#fff"),a.style.visibility="visible",t.style.visibility="hidden"}else{t.style.visibility="visible";var s=t.$newDom;s&&(s.style.visibility="hidden")}}function a(){var t=document.querySelector(".js-overlay"),n=document.querySelector(".js-header-menu");c(t,document.body.scrollTop,-63,2,0),c(n,document.body.scrollTop,1,3,0)}function s(){document.querySelector("#container").addEventListener("scroll",function(t){a()}),window.addEventListener("scroll",function(t){a()}),a()}function l(){x.default.versions.mobile&&window.screen.width<800&&(i(),s())}var p=e(71),d=r(p),v=e(72),y=(r(v),e(84)),h=r(y),b=e(69),x=r(b),m=e(75),g=r(m),w=e(70);l(),(0,w.addLoadEvent)(function(){g.default.init()}),t.exports={}},function(t,n){var e=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=e)},function(t,n){var e={}.hasOwnProperty;t.exports=function(t,n){return e.call(t,n)}},function(t,n,e){var r=e(49),o=e(15);t.exports=function(t){return r(o(t))}},function(t,n,e){t.exports=!e(8)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,n,e){var r=e(6),o=e(12);t.exports=e(4)?function(t,n,e){return r.f(t,n,o(1,e))}:function(t,n,e){return t[n]=e,t}},function(t,n,e){var r=e(10),o=e(30),i=e(24),u=Object.defineProperty;n.f=e(4)?Object.defineProperty:function(t,n,e){if(r(t),n=i(n,!0),r(e),o)try{return u(t,n,e)}catch(t){}if("get"in e||"set"in e)throw TypeError("Accessors not supported!");return"value"in e&&(t[n]=e.value),t}},function(t,n,e){var r=e(22)("wks"),o=e(13),i=e(1).Symbol,u="function"==typeof i,f=t.exports=function(t){return r[t]||(r[t]=u&&i[t]||(u?i:o)("Symbol."+t))};f.store=r},function(t,n){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,n,e){var r=e(35),o=e(16);t.exports=Object.keys||function(t){return r(t,o)}},function(t,n,e){var r=e(11);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,n){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,n){t.exports=function(t,n){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:n}}},function(t,n){var e=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++e+r).toString(36))}},function(t,n){var e=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=e)},function(t,n){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,n){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,n){t.exports={}},function(t,n){t.exports=!0},function(t,n){n.f={}.propertyIsEnumerable},function(t,n,e){var r=e(6).f,o=e(2),i=e(7)("toStringTag");t.exports=function(t,n,e){t&&!o(t=e?t:t.prototype,i)&&r(t,i,{configurable:!0,value:n})}},function(t,n,e){var r=e(22)("keys"),o=e(13);t.exports=function(t){return r[t]||(r[t]=o(t))}},function(t,n,e){var r=e(1),o="__core-js_shared__",i=r[o]||(r[o]={});t.exports=function(t){return i[t]||(i[t]={})}},function(t,n){var e=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:e)(t)}},function(t,n,e){var r=e(11);t.exports=function(t,n){if(!r(t))return t;var e,o;if(n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;if("function"==typeof(e=t.valueOf)&&!r(o=e.call(t)))return o;if(!n&&"function"==typeof(e=t.toString)&&!r(o=e.call(t)))return o;throw TypeError("Can't convert object to primitive value")}},function(t,n,e){var r=e(1),o=e(14),i=e(18),u=e(26),f=e(6).f;t.exports=function(t){var n=o.Symbol||(o.Symbol=i?{}:r.Symbol||{});"_"==t.charAt(0)||t in n||f(n,t,{value:u.f(t)})}},function(t,n,e){n.f=e(7)},function(t,n,e){var r=e(1),o=e(14),i=e(46),u=e(5),f="prototype",c=function(t,n,e){var a,s,l,p=t&c.F,d=t&c.G,v=t&c.S,y=t&c.P,h=t&c.B,b=t&c.W,x=d?o:o[n]||(o[n]={}),m=x[f],g=d?r:v?r[n]:(r[n]||{})[f];d&&(e=n);for(a in e)s=!p&&g&&void 0!==g[a],s&&a in x||(l=s?g[a]:e[a],x[a]=d&&"function"!=typeof g[a]?e[a]:h&&s?i(l,r):b&&g[a]==l?function(t){var n=function(n,e,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(n);case 2:return new t(n,e)}return new t(n,e,r)}return t.apply(this,arguments)};return n[f]=t[f],n}(l):y&&"function"==typeof l?i(Function.call,l):l,y&&((x.virtual||(x.virtual={}))[a]=l,t&c.R&&m&&!m[a]&&u(m,a,l)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,n){var e={}.toString;t.exports=function(t){return e.call(t).slice(8,-1)}},function(t,n,e){var r=e(11),o=e(1).document,i=r(o)&&r(o.createElement);t.exports=function(t){return i?o.createElement(t):{}}},function(t,n,e){t.exports=!e(4)&&!e(8)(function(){return 7!=Object.defineProperty(e(29)("div"),"a",{get:function(){return 7}}).a})},function(t,n,e){"use strict";var r=e(18),o=e(27),i=e(36),u=e(5),f=e(2),c=e(17),a=e(51),s=e(20),l=e(58),p=e(7)("iterator"),d=!([].keys&&"next"in[].keys()),v="@@iterator",y="keys",h="values",b=function(){return this};t.exports=function(t,n,e,x,m,g,w){a(e,n,x);var O,S,_,j=function(t){if(!d&&t in A)return A[t];switch(t){case y:return function(){return new e(this,t)};case h:return function(){return new e(this,t)}}return function(){return new e(this,t)}},P=n+" Iterator",E=m==h,M=!1,A=t.prototype,T=A[p]||A[v]||m&&A[m],L=T||j(m),N=m?E?j("entries"):L:void 0,C="Array"==n?A.entries||T:T;if(C&&(_=l(C.call(new t)),_!==Object.prototype&&(s(_,P,!0),r||f(_,p)||u(_,p,b))),E&&T&&T.name!==h&&(M=!0,L=function(){return T.call(this)}),r&&!w||!d&&!M&&A[p]||u(A,p,L),c[n]=L,c[P]=b,m)if(O={values:E?L:j(h),keys:g?L:j(y),entries:N},w)for(S in O)S in A||i(A,S,O[S]);else o(o.P+o.F*(d||M),n,O);return O}},function(t,n,e){var r=e(10),o=e(55),i=e(16),u=e(21)("IE_PROTO"),f=function(){},c="prototype",a=function(){var t,n=e(29)("iframe"),r=i.length,o="<",u=">";for(n.style.display="none",e(48).appendChild(n),n.src="javascript:",t=n.contentWindow.document,t.open(),t.write(o+"script"+u+"document.F=Object"+o+"/script"+u),t.close(),a=t.F;r--;)delete a[c][i[r]];return a()};t.exports=Object.create||function(t,n){var e;return null!==t?(f[c]=r(t),e=new f,f[c]=null,e[u]=t):e=a(),void 0===n?e:o(e,n)}},function(t,n,e){var r=e(35),o=e(16).concat("length","prototype");n.f=Object.getOwnPropertyNames||function(t){return r(t,o)}},function(t,n){n.f=Object.getOwnPropertySymbols},function(t,n,e){var r=e(2),o=e(3),i=e(45)(!1),u=e(21)("IE_PROTO");t.exports=function(t,n){var e,f=o(t),c=0,a=[];for(e in f)e!=u&&r(f,e)&&a.push(e);for(;n.length>c;)r(f,e=n[c++])&&(~i(a,e)||a.push(e));return a}},function(t,n,e){t.exports=e(5)},function(t,n,e){var r=e(15);t.exports=function(t){return Object(r(t))}},function(t,n,e){t.exports={default:e(41),__esModule:!0}},function(t,n,e){t.exports={default:e(42),__esModule:!0}},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}n.__esModule=!0;var o=e(39),i=r(o),u=e(38),f=r(u),c="function"==typeof f.default&&"symbol"==typeof i.default?function(t){return typeof t}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":typeof t};n.default="function"==typeof f.default&&"symbol"===c(i.default)?function(t){return"undefined"==typeof t?"undefined":c(t)}:function(t){return t&&"function"==typeof f.default&&t.constructor===f.default&&t!==f.default.prototype?"symbol":"undefined"==typeof t?"undefined":c(t)}},function(t,n,e){e(65),e(63),e(66),e(67),t.exports=e(14).Symbol},function(t,n,e){e(64),e(68),t.exports=e(26).f("iterator")},function(t,n){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,n){t.exports=function(){}},function(t,n,e){var r=e(3),o=e(61),i=e(60);t.exports=function(t){return function(n,e,u){var f,c=r(n),a=o(c.length),s=i(u,a);if(t&&e!=e){for(;a>s;)if(f=c[s++],f!=f)return!0}else for(;a>s;s++)if((t||s in c)&&c[s]===e)return t||s||0;return!t&&-1}}},function(t,n,e){var r=e(43);t.exports=function(t,n,e){if(r(t),void 0===n)return t;switch(e){case 1:return function(e){return t.call(n,e)};case 2:return function(e,r){return t.call(n,e,r)};case 3:return function(e,r,o){return t.call(n,e,r,o)}}return function(){return t.apply(n,arguments)}}},function(t,n,e){var r=e(9),o=e(34),i=e(19);t.exports=function(t){var n=r(t),e=o.f;if(e)for(var u,f=e(t),c=i.f,a=0;f.length>a;)c.call(t,u=f[a++])&&n.push(u);return n}},function(t,n,e){t.exports=e(1).document&&document.documentElement},function(t,n,e){var r=e(28);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,n,e){var r=e(28);t.exports=Array.isArray||function(t){return"Array"==r(t)}},function(t,n,e){"use strict";var r=e(32),o=e(12),i=e(20),u={};e(5)(u,e(7)("iterator"),function(){return this}),t.exports=function(t,n,e){t.prototype=r(u,{next:o(1,e)}),i(t,n+" Iterator")}},function(t,n){t.exports=function(t,n){return{value:n,done:!!t}}},function(t,n,e){var r=e(9),o=e(3);t.exports=function(t,n){for(var e,i=o(t),u=r(i),f=u.length,c=0;f>c;)if(i[e=u[c++]]===n)return e}},function(t,n,e){var r=e(13)("meta"),o=e(11),i=e(2),u=e(6).f,f=0,c=Object.isExtensible||function(){return!0},a=!e(8)(function(){return c(Object.preventExtensions({}))}),s=function(t){u(t,r,{value:{i:"O"+ ++f,w:{}}})},l=function(t,n){if(!o(t))return"symbol"==typeof t?t:("string"==typeof t?"S":"P")+t;if(!i(t,r)){if(!c(t))return"F";if(!n)return"E";s(t)}return t[r].i},p=function(t,n){if(!i(t,r)){if(!c(t))return!0;if(!n)return!1;s(t)}return t[r].w},d=function(t){return a&&v.NEED&&c(t)&&!i(t,r)&&s(t),t},v=t.exports={KEY:r,NEED:!1,fastKey:l,getWeak:p,onFreeze:d}},function(t,n,e){var r=e(6),o=e(10),i=e(9);t.exports=e(4)?Object.defineProperties:function(t,n){o(t);for(var e,u=i(n),f=u.length,c=0;f>c;)r.f(t,e=u[c++],n[e]);return t}},function(t,n,e){var r=e(19),o=e(12),i=e(3),u=e(24),f=e(2),c=e(30),a=Object.getOwnPropertyDescriptor;n.f=e(4)?a:function(t,n){if(t=i(t),n=u(n,!0),c)try{return a(t,n)}catch(t){}if(f(t,n))return o(!r.f.call(t,n),t[n])}},function(t,n,e){var r=e(3),o=e(33).f,i={}.toString,u="object"==typeof window&&window&&Object.getOwnPropertyNames?Object.getOwnPropertyNames(window):[],f=function(t){try{return o(t)}catch(t){return u.slice()}};t.exports.f=function(t){return u&&"[object Window]"==i.call(t)?f(t):o(r(t))}},function(t,n,e){var r=e(2),o=e(37),i=e(21)("IE_PROTO"),u=Object.prototype;t.exports=Object.getPrototypeOf||function(t){return t=o(t),r(t,i)?t[i]:"function"==typeof t.constructor&&t instanceof t.constructor?t.constructor.prototype:t instanceof Object?u:null}},function(t,n,e){var r=e(23),o=e(15);t.exports=function(t){return function(n,e){var i,u,f=String(o(n)),c=r(e),a=f.length;return c<0||c>=a?t?"":void 0:(i=f.charCodeAt(c),i<55296||i>56319||c+1===a||(u=f.charCodeAt(c+1))<56320||u>57343?t?f.charAt(c):i:t?f.slice(c,c+2):(i-55296<<10)+(u-56320)+65536)}}},function(t,n,e){var r=e(23),o=Math.max,i=Math.min;t.exports=function(t,n){return t=r(t),t<0?o(t+n,0):i(t,n)}},function(t,n,e){var r=e(23),o=Math.min;t.exports=function(t){return t>0?o(r(t),9007199254740991):0}},function(t,n,e){"use strict";var r=e(44),o=e(52),i=e(17),u=e(3);t.exports=e(31)(Array,"Array",function(t,n){this._t=u(t),this._i=0,this._k=n},function(){var t=this._t,n=this._k,e=this._i++;return!t||e>=t.length?(this._t=void 0,o(1)):"keys"==n?o(0,e):"values"==n?o(0,t[e]):o(0,[e,t[e]])},"values"),i.Arguments=i.Array,r("keys"),r("values"),r("entries")},function(t,n){},function(t,n,e){"use strict";var r=e(59)(!0);e(31)(String,"String",function(t){this._t=String(t),this._i=0},function(){var t,n=this._t,e=this._i;return e>=n.length?{value:void 0,done:!0}:(t=r(n,e),this._i+=t.length,{value:t,done:!1})})},function(t,n,e){"use strict";var r=e(1),o=e(2),i=e(4),u=e(27),f=e(36),c=e(54).KEY,a=e(8),s=e(22),l=e(20),p=e(13),d=e(7),v=e(26),y=e(25),h=e(53),b=e(47),x=e(50),m=e(10),g=e(3),w=e(24),O=e(12),S=e(32),_=e(57),j=e(56),P=e(6),E=e(9),M=j.f,A=P.f,T=_.f,L=r.Symbol,N=r.JSON,C=N&&N.stringify,k="prototype",F=d("_hidden"),q=d("toPrimitive"),I={}.propertyIsEnumerable,B=s("symbol-registry"),D=s("symbols"),W=s("op-symbols"),H=Object[k],K="function"==typeof L,R=r.QObject,J=!R||!R[k]||!R[k].findChild,U=i&&a(function(){return 7!=S(A({},"a",{get:function(){return A(this,"a",{value:7}).a}})).a})?function(t,n,e){var r=M(H,n);r&&delete H[n],A(t,n,e),r&&t!==H&&A(H,n,r)}:A,G=function(t){var n=D[t]=S(L[k]);return n._k=t,n},$=K&&"symbol"==typeof L.iterator?function(t){return"symbol"==typeof t}:function(t){return t instanceof L},z=function(t,n,e){return t===H&&z(W,n,e),m(t),n=w(n,!0),m(e),o(D,n)?(e.enumerable?(o(t,F)&&t[F][n]&&(t[F][n]=!1),e=S(e,{enumerable:O(0,!1)})):(o(t,F)||A(t,F,O(1,{})),t[F][n]=!0),U(t,n,e)):A(t,n,e)},Y=function(t,n){m(t);for(var e,r=b(n=g(n)),o=0,i=r.length;i>o;)z(t,e=r[o++],n[e]);return t},Q=function(t,n){return void 0===n?S(t):Y(S(t),n)},X=function(t){var n=I.call(this,t=w(t,!0));return!(this===H&&o(D,t)&&!o(W,t))&&(!(n||!o(this,t)||!o(D,t)||o(this,F)&&this[F][t])||n)},V=function(t,n){if(t=g(t),n=w(n,!0),t!==H||!o(D,n)||o(W,n)){var e=M(t,n);return!e||!o(D,n)||o(t,F)&&t[F][n]||(e.enumerable=!0),e}},Z=function(t){for(var n,e=T(g(t)),r=[],i=0;e.length>i;)o(D,n=e[i++])||n==F||n==c||r.push(n);return r},tt=function(t){for(var n,e=t===H,r=T(e?W:g(t)),i=[],u=0;r.length>u;)!o(D,n=r[u++])||e&&!o(H,n)||i.push(D[n]);return i};K||(L=function(){if(this instanceof L)throw TypeError("Symbol is not a constructor!");var t=p(arguments.length>0?arguments[0]:void 0),n=function(e){this===H&&n.call(W,e),o(this,F)&&o(this[F],t)&&(this[F][t]=!1),U(this,t,O(1,e))};return i&&J&&U(H,t,{configurable:!0,set:n}),G(t)},f(L[k],"toString",function(){return this._k}),j.f=V,P.f=z,e(33).f=_.f=Z,e(19).f=X,e(34).f=tt,i&&!e(18)&&f(H,"propertyIsEnumerable",X,!0),v.f=function(t){return G(d(t))}),u(u.G+u.W+u.F*!K,{Symbol:L});for(var nt="hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables".split(","),et=0;nt.length>et;)d(nt[et++]);for(var nt=E(d.store),et=0;nt.length>et;)y(nt[et++]);u(u.S+u.F*!K,"Symbol",{for:function(t){return o(B,t+="")?B[t]:B[t]=L(t)},keyFor:function(t){if($(t))return h(B,t);throw TypeError(t+" is not a symbol!")},useSetter:function(){J=!0},useSimple:function(){J=!1}}),u(u.S+u.F*!K,"Object",{create:Q,defineProperty:z,defineProperties:Y,getOwnPropertyDescriptor:V,getOwnPropertyNames:Z,getOwnPropertySymbols:tt}),N&&u(u.S+u.F*(!K||a(function(){var t=L();return"[null]"!=C([t])||"{}"!=C({a:t})||"{}"!=C(Object(t))})),"JSON",{stringify:function(t){if(void 0!==t&&!$(t)){for(var n,e,r=[t],o=1;arguments.length>o;)r.push(arguments[o++]);return n=r[1],"function"==typeof n&&(e=n),!e&&x(n)||(n=function(t,n){if(e&&(n=e.call(this,t,n)),!$(n))return n}),r[1]=n,C.apply(N,r)}}}),L[k][q]||e(5)(L[k],q,L[k].valueOf),l(L,"Symbol"),l(Math,"Math",!0),l(r.JSON,"JSON",!0)},function(t,n,e){e(25)("asyncIterator")},function(t,n,e){e(25)("observable")},function(t,n,e){e(62);for(var r=e(1),o=e(5),i=e(17),u=e(7)("toStringTag"),f=["NodeList","DOMTokenList","MediaList","StyleSheetList","CSSRuleList"],c=0;c<5;c++){var a=f[c],s=r[a],l=s&&s.prototype;l&&!l[u]&&o(l,u,a),i[a]=i.Array}},function(t,n){"use strict";var e={versions:function(){var t=window.navigator.userAgent;return{trident:t.indexOf("Trident")>-1,presto:t.indexOf("Presto")>-1,webKit:t.indexOf("AppleWebKit")>-1,gecko:t.indexOf("Gecko")>-1&&t.indexOf("KHTML")==-1,mobile:!!t.match(/AppleWebKit.*Mobile.*/),ios:!!t.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/),android:t.indexOf("Android")>-1||t.indexOf("Linux")>-1,iPhone:t.indexOf("iPhone")>-1||t.indexOf("Mac")>-1,iPad:t.indexOf("iPad")>-1,webApp:t.indexOf("Safari")==-1,weixin:t.indexOf("MicroMessenger")==-1}}()};t.exports=e},function(t,n,e){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}var o=e(40),i=r(o),u=function(){function t(t,n,e){return n||e?String.fromCharCode(n||e):o[t]||t}function n(t){return l[t]}var e=/&quot;|&lt;|&gt;|&amp;|&nbsp;|&apos;|&#(\d+);|&#(\d+)/g,r=/['<> "&]/g,o={"&quot;":'"',"&lt;":"<","&gt;":">","&amp;":"&","&nbsp;":" "},f=/\u00a0/g,c=/<br\s*\/?>/gi,a=/\r?\n/g,s=/\s/g,l={};for(var p in o)l[o[p]]=p;return o["&apos;"]="'",l["'"]="&#39;",{encode:function(t){return t?(""+t).replace(r,n).replace(a,"<br/>").replace(s,"&nbsp;"):""},decode:function(n){return n?(""+n).replace(c,"\n").replace(e,t).replace(f," "):""},encodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},encodeBase16forJSON:function(t){if(!t)return t;t=t.replace(/[\u4E00-\u9FBF]/gi,function(t){return escape(t).replace("%u","\\u")});for(var n=[],e=0,r=t.length;r>e;e++)n.push(t.charCodeAt(e).toString(16).toUpperCase());return n.join("")},decodeBase16:function(t){if(!t)return t;t+="";for(var n=[],e=0,r=t.length;r>e;e+=2)n.push(String.fromCharCode("0x"+t.slice(e,e+2)));return n.join("")},encodeObject:function(t){if(t instanceof Array)for(var n=0,e=t.length;e>n;n++)t[n]=u.encodeObject(t[n]);else if("object"==("undefined"==typeof t?"undefined":(0,i.default)(t)))for(var r in t)t[r]=u.encodeObject(t[r]);else if("string"==typeof t)return u.encode(t);return t},loadScript:function(t){var n=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(n),n.setAttribute("src",t)},addLoadEvent:function(t){var n=window.onload;"function"!=typeof window.onload?window.onload=t:window.onload=function(){n(),t()}}}}();t.exports=u},function(t,n){function e(t,n){t.classList?t.classList.add(n):t.className+=" "+n}t.exports=e},function(t,n){function e(t,n){if(t.classList)t.classList.remove(n);else{var e=new RegExp("(^|\\b)"+n.split(" ").join("|")+"(\\b|$)","gi");t.className=t.className.replace(e," ")}}t.exports=e},,,function(t,n){"use strict";function e(){var t=document.querySelector("#page-nav");if(t&&!document.querySelector("#page-nav .extend.prev")&&(t.innerHTML='<a class="extend prev disabled" rel="prev">&laquo; Prev</a>'+t.innerHTML),t&&!document.querySelector("#page-nav .extend.next")&&(t.innerHTML=t.innerHTML+'<a class="extend next disabled" rel="next">Next &raquo;</a>'),yiliaConfig&&yiliaConfig.open_in_new){var n=document.querySelectorAll(".article-entry a:not(.article-more-a)");n.forEach(function(t){t.setAttribute("target","_blank")})}var e=document.querySelector("#js-aboutme");e&&0!==e.length&&(e.innerHTML=e.innerText)}t.exports={init:e}},,,,,,,,,function(t,n){function e(t,n){if("string"==typeof n)return t.insertAdjacentHTML("afterend",n);var e=t.nextSibling;return e?t.parentNode.insertBefore(n,e):t.parentNode.appendChild(n)}t.exports=e}])</script><script src="/./main.4a39e8.js"></script><script>!function(){var e=function(e){var t=document.createElement("script");document.getElementsByTagName("body")[0].appendChild(t),t.setAttribute("src",e)};e("/slider.e97a05.js")}()</script>
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+    
+<div class="tools-col" q-class="show:isShow,hide:isShow|isFalse" q-on="click:stop(e)">
+  <div class="tools-nav header-menu">
+    
+    
+      
+      
+      
+    
+      
+      
+      
+    
+      
+      
+      
+    
+    
+
+    <ul style="width: 70%">
+    
+    
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">友链</a></li>
+      
+        
+      
+      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      
+        
+    </ul>
+  </div>
+  <div class="tools-wrap">
+    
+    	<section class="tools-section tools-section-all" q-show="innerArchive">
+        <div class="search-wrap">
+          <input class="search-ipt" q-model="search" type="text" placeholder="find something…">
+          <i class="icon-search icon" q-show="search|isEmptyStr"></i>
+          <i class="icon-close icon" q-show="search|isNotEmptyStr" q-on="click:clearChose(e)"></i>
+        </div>
+        <div class="widget tagcloud search-tag">
+          <p class="search-tag-wording">tag:</p>
+          <label class="search-switch">
+            <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
+          </label>
+          <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Spark</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">JStorm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">Java</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">SQL</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">ML</a>
+              </li>
+            
+            <div class="clearfix"></div>
+          </ul>
+        </div>
+        <ul class="search-ul">
+          <p q-show="jsonFail" style="padding: 20px; font-size: 12px;">
+            缺失模块。<br/>1、在博客根目录（注意不是yilia根目录）执行以下命令：<br/> npm i hexo-generator-json-content --save<br/><br/>
+            2、在根目录_config.yml里添加配置：
+<pre style="font-size: 12px;" q-show="jsonFail">
+  jsonContent:
+    meta: false
+    pages: false
+    posts:
+      title: true
+      date: true
+      path: true
+      text: true
+      raw: false
+      content: false
+      slug: false
+      updated: false
+      comments: false
+      link: false
+      permalink: false
+      excerpt: false
+      categories: false
+      tags: true
+</pre>
+          </p>
+          <li class="search-li" q-repeat="items" q-show="isShow">
+            <a q-attr="href:path|urlformat" class="search-title"><i class="icon-quo-left icon"></i><span q-text="title"></span></a>
+            <p class="search-time">
+              <i class="icon-calendar icon"></i>
+              <span q-text="date|dateformat"></span>
+            </p>
+            <p class="search-tag">
+              <i class="icon-price-tags icon"></i>
+              <span q-repeat="tags" q-on="click:choseTag(e, name)" q-text="name|tagformat"></span>
+            </p>
+          </li>
+        </ul>
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-friends" q-show="friends">
+  		
+        <ul class="search-ul">
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
+            </li>
+          
+            <li class="search-li">
+              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
+            </li>
+          
+        </ul>
+  		
+    	</section>
+    
+
+    
+    	<section class="tools-section tools-section-me" q-show="aboutme">
+  	  	
+  	  		<div class="aboutme-wrap" id="js-aboutme">前行的路上&lt;br&gt;&lt;br&gt;点点滴滴……</div>
+  	  	
+    	</section>
+    
+  </div>
+  
+</div>
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+  </div><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</body>
+</html>

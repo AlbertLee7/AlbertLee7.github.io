@@ -46,7 +46,7 @@
 <div class="intrude-less">
 	<header id="header" class="inner">
 		<a href="/" class="profilepic">
-			<img src="https://github.com/AlbertLee7/github-blog-img/blob/master/head.jpg" class="js-avatar">
+			<img src="https://raw.githubusercontent.com/AlbertLee7/raw.githubusercontent-blog-img/master/img/head.jpg" class="js-avatar">
 		</a>
 		<hgroup>
 		  <h1 class="header-author"><a href="/">AlbertLee</a></h1>
@@ -106,7 +106,7 @@
 	<div class="intrude-less">
 		<header id="header" class="inner">
 			<div class="profilepic">
-				<img src="https://github.com/AlbertLee7/github-blog-img/blob/master/head.jpg" class="js-avatar">
+				<img src="https://raw.githubusercontent.com/AlbertLee7/raw.githubusercontent-blog-img/master/img/head.jpg" class="js-avatar">
 			</div>
 			<hgroup>
 			  <h1 class="header-author js-header-author">AlbertLee</h1>
@@ -158,6 +158,148 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-Spark源码阅读3——SparkContext初始化流程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/27/Spark源码阅读3——SparkContext初始化流程/">Spark源码阅读1——spark-submit应用提交整体流程</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/27/Spark源码阅读3——SparkContext初始化流程/" class="archive-article-date">
+  	<time datetime="2019-05-27T14:37:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-27</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>SparkContext是Spark函数的主入口，一个SparkContext代表与Spark集群的连接，可以用来在集群创建RDD、累加器、广播变量等。每一个JVM只能有一个活跃的SparkContext实例，在创建新的SparkContext实例之前，必须stop正活跃的SparkContext实例。不过这个限制最终可能会移除掉。</p>
+<p>##1. SparkContext类初始化</p>
+<p>纵观SpartContext类的初始化过程，主要创建了<code>LiveListenerBus</code>、<code>SparkStatusTracker</code>、<code>HeartbeatReceiver</code>、<code>SchedulerBackend</code>、<code>TaskScheduler</code>和<code>DAGScheduler</code>实例。这些实例，在后期会完成event监听、status追踪、heartbeat接受、后台调度、任务调度、DAG调度等工作，是Spark Application得以运行的基石。</p>
+        
+          <a class="article-more-a" href="/2019/05/27/Spark源码阅读3——SparkContext初始化流程/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/27/Spark源码阅读3——SparkContext初始化流程/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-Spark源码阅读1——spark-submit应用提交" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/23/Spark源码阅读1——spark-submit应用提交/">Spark源码阅读1——spark-submit应用提交整体流程</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/23/Spark源码阅读1——spark-submit应用提交/" class="archive-article-date">
+  	<time datetime="2019-05-23T12:37:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-spark-submit脚本"><a href="#1-spark-submit脚本" class="headerlink" title="1. spark-submit脚本"></a>1. spark-submit脚本</h2><ol>
+<li>判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。</li>
+<li>执行<code>exec &quot;${SPARK_HOME}&quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &quot;$@&quot;</code>命令，调用spark-class脚本。</li>
+</ol>
+<p>##2. spark-class脚本</p>
+<ol>
+<li>判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。</li>
+<li>执行load-spark-env.sh脚本，设置一些环境变量。</li>
+<li>检查java环境变量。</li>
+<li>检查${SPARK_HOME}中的jars。</li>
+<li>定义如下函数，解析spark-submit脚本传递的参数，并打印解析后的参数。函数中$RUNNER变量是java</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">build_command</span></span>() &#123;</span><br><span class="line">  <span class="string">"<span class="variable">$RUNNER</span>"</span> -Xmx128m -cp <span class="string">"<span class="variable">$LAUNCH_CLASSPATH</span>"</span> org.apache.spark.launcher.Main <span class="string">"<span class="variable">$@</span>"</span></span><br><span class="line">  <span class="built_in">printf</span> <span class="string">"%d\0"</span> $?</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2019/05/23/Spark源码阅读1——spark-submit应用提交/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Spark</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/23/Spark源码阅读1——spark-submit应用提交/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
   
     <article id="post-《统计学习方法6——Logistic回归与最大熵模型》" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -639,165 +781,38 @@
 
 
   
-    <article id="post-2017年度总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-Spark源码阅读2——YarnCluster模式下应用提交流程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/02/13/2017年度总结/">2017年度工作总结</a>
+      <a class="article-title" href="/2018/05/24/Spark源码阅读2——YarnCluster模式下应用提交流程/">Spark源码阅读2——YarnCluster模式下应用提交流程</a>
     </h1>
   
 
         
-        <a href="/2018/02/13/2017年度总结/" class="archive-article-date">
-  	<time datetime="2018-02-13T05:29:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-02-13</time>
+        <a href="/2018/05/24/Spark源码阅读2——YarnCluster模式下应用提交流程/" class="archive-article-date">
+  	<time datetime="2018-05-24T12:45:10.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-24</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>今天是农历腊月二十八，时间快的让人猝不及防，又是一年春节，前天刚刚结束在北京为期50天的封闭开发回到沈阳公司，趁着这个闲暇时间简单总结下自己在即将过去的2017年中的工作与生活，并展望下2018年，开启新的篇章。</p>
-<h2 id="1-2017年工作总结"><a href="#1-2017年工作总结" class="headerlink" title="1. 2017年工作总结"></a>1. 2017年工作总结</h2><p>依然清晰记得去年春节的时候，公司让每位员工写下各自2017年KPI，我当时还是一个只会写Storm实时分析的初级开发人员，充满了对周围Spark高级工程师的崇拜，所以我在KPI写的是：1.深入了解Storm内部机制，做到不仅仅会使用Storm，还要做到知其所以然；2. 学习Spark，能够自己开发Spark离线分析程序和实时分析程序。<br>现在回首过去的2017年感慨颇多，虽然我已经离开了当初的公司，但在2017年我一直在按照当初的KPI努力。</p>
+        <h2 id="1-org-apache-spark-deploy-yarn-Client类"><a href="#1-org-apache-spark-deploy-yarn-Client类" class="headerlink" title="1. org.apache.spark.deploy.yarn.Client类"></a>1. org.apache.spark.deploy.yarn.Client类</h2><p>在《Spark源码阅读1——spark-submit应用提交整体流程》文章中，我们已经了解到YarnCluster模式下会将用户的jar包加入到类加载路径中，并通过 <code>childArgs += (&quot;--class&quot;, args.mainClass)</code>将用户的主类作为参数传入，最后利用反射机制调用<code>org.apache.spark.deploy.yarn.Client</code>类的main方法。那么下面我们就来看一下YarnCluster模式下，在调用<code>yarn/Client</code>类的main方法后，是如何在Yarn集群中启动我们的Spark Application的。</p>
+<h3 id="1-1-main方法"><a href="#1-1-main方法" class="headerlink" title="1.1 main方法"></a>1.1 main方法</h3><p>该方法的内容比较精简：</p>
 <ol>
-<li>2017年3月，我阅读了Storm的部分源码，了解了storm应用程序的启动流程，了解了Nimbus/Supervisor与Zookeeper之前通过心跳包完成数据/任务同步与状态监控，了解了Supervisor与Worker通过节点本地磁盘实现数据交换/任务分配与状态监控。</li>
-<li>2017年4月，我通过Spark官方文档学习了Spark离线开发并在君哥的指导下慢慢独自开始负责一部分Spark离线报表的产出工作，但当时也只是停留在使用阶段，不了解Spark的一些细节以及具体配置。
+<li>判断系统参数中是否包含<code>SPARK_SUBMIT</code>，若不包含则打印告警信息；</li>
+<li>设置系统参数<code>SPARK_YARN_MODE</code>为true；</li>
+<li>构建SparkConf对象；</li>
+<li>由于Yarn模式下，SparkSubmit将会使用Yarn来分布式缓存file和jar包，故从sparkConf中删除<code>saprk.jars</code>和<code>spark.files</code>；</li>
+<li>构建<code>ClientArguments</code>对象；</li>
+<li>构建Client对象，并调用run()方法。</li>
+</ol>
         
-          <a class="article-more-a" href="/2018/02/13/2017年度总结/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/02/13/2017年度总结/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-《深入理解JVM虚拟机》阅读总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/11/《深入理解JVM虚拟机》阅读总结/">《深入理解JVM虚拟机》阅读总结</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/11/《深入理解JVM虚拟机》阅读总结/" class="archive-article-date">
-  	<time datetime="2017-12-11T02:37:11.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-写在前面"><a href="#1-写在前面" class="headerlink" title="1. 写在前面"></a>1. 写在前面</h2><p>实际项目中，编写Java程序时一直都停留在应用阶段，至于代码编译后是什么样子，类文件如何加载，如何执行，JVM内存分配与垃圾回收等内容，一直都是一知半解，总想着找机会读一下《深入理解Java虚拟机》这本书。近段时间，总算是有了些许空余时间，怀着略显饥渴的心情，在两周时间里断断续续的读完了这本书。然而才过了这么几天，对书中讲解的知识点又忘记的差不多了(吐血ing…)。也许读书就是这样吧，读第一遍只能记住书的大概，只有在实际项目中遇到问题回头翻阅这本书时去读第二遍以至第三遍，才能完完全吸收书中的知识点。今天，借此机会，简单总结一下书中知识点，方便以后回顾，也算是为第一遍阅读《深入理解Java虚拟机》画下一个句号。</p>
-<h2 id="2-JVM内存分布"><a href="#2-JVM内存分布" class="headerlink" title="2. JVM内存分布"></a>2. JVM内存分布</h2><p><img src="http://ojr3dihlp.bkt.clouddn.com/jvm%20memory.png" alt=""><br>上图为JVM运行时内存分布，主要虚拟机栈、本地方法栈、程序计数器、JVM堆和方法区。其中堆和方法区是Thread共享的，虚拟机栈、本地方法栈和程序计数器是Thread独享的。</p>
-<h3 id="2-1-程序计数器"><a href="#2-1-程序计数器" class="headerlink" title="2.1 程序计数器"></a>2.1 程序计数器</h3><p>程序计数器：每个Thread都有程序计数器，用来保存代码的执行位置。</p>
-<h3 id="2-2-虚拟机栈"><a href="#2-2-虚拟机栈" class="headerlink" title="2.2 虚拟机栈"></a>2.2 虚拟机栈</h3><p>虚拟机栈中分布有栈帧，每个方法对应一个栈帧，方法的运行伴随着栈帧的入栈和出栈操作。栈帧中保存有局部变量表、操作数栈、返回地址、动态连接等信息。局部变量表在代码编译成类文件后会指定需要多个slot，局部变量表的大小就确定了，方法的参数、外部引用、this引用等都保存在局部变量表中。<br>代码运行时需要进行入栈和出栈操作，这些都需要使用操作数栈来实现。<br>
-        
-          <a class="article-more-a" href="/2017/12/11/《深入理解JVM虚拟机》阅读总结/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Java</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/11/《深入理解JVM虚拟机》阅读总结/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-SparkStreaming实践总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/12/08/SparkStreaming实践总结/">SparkStreaming实践总结</a>
-    </h1>
-  
-
-        
-        <a href="/2017/12/08/SparkStreaming实践总结/" class="archive-article-date">
-  	<time datetime="2017-12-08T06:13:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-12-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-写在前面"><a href="#1-写在前面" class="headerlink" title="1. 写在前面"></a>1. 写在前面</h2><p>上个月做了一个SparkStreaming的小项目，数据量很小，功能也比较单一，从Kafka读取数据经过简单处理，将最终的数据落地到Mysql中。虽然项目小，但这是我第一个SparkStreaming项目，通过这个简单实践，让我对SparkStreaming应用和Scala编程都有了一个更深的认识。这个过程中，遇到一些问题，也引发了一些思考，记录于此，算是对这个项目的简单总结吧，保密起见，文中代码都是网上找的一些示例代码，不涉及项目实际代码。</p>
-<h2 id="2-SparkStreaming读取Kafka数据"><a href="#2-SparkStreaming读取Kafka数据" class="headerlink" title="2. SparkStreaming读取Kafka数据"></a>2. SparkStreaming读取Kafka数据</h2><h3 id="2-1-Kafka-High-Level-Consumer方式"><a href="#2-1-Kafka-High-Level-Consumer方式" class="headerlink" title="2.1 Kafka High Level Consumer方式"></a>2.1 Kafka High Level Consumer方式</h3><p><img src="http://ojr3dihlp.bkt.clouddn.com/Kafka%20High%20Level.png" alt=""><br>
-        
-          <a class="article-more-a" href="/2017/12/08/SparkStreaming实践总结/#more">more >></a>
+          <a class="article-more-a" href="/2018/05/24/Spark源码阅读2——YarnCluster模式下应用提交流程/#more">more >></a>
         
       
 
@@ -821,7 +836,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2017/12/08/SparkStreaming实践总结/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/05/24/Spark源码阅读2——YarnCluster模式下应用提交流程/">展开全文 >></a>
         </p>
       
 
@@ -953,11 +968,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -965,7 +980,7 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+                <a href="javascript:void(0)" class="js-tag color1">HBase</a>
               </li>
              
               <li class="article-tag-list-item">
