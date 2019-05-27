@@ -180,8 +180,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>SparkContext是Spark函数的主入口，一个SparkContext代表与Spark集群的连接，可以用来在集群创建RDD、累加器、广播变量等。每一个JVM只能有一个活跃的SparkContext实例，在创建新的SparkContext实例之前，必须stop正活跃的SparkContext实例。不过这个限制最终可能会移除掉。</p>
-<p>##1. SparkContext类初始化</p>
-<p>纵观SpartContext类的初始化过程，主要创建了<code>LiveListenerBus</code>、<code>SparkStatusTracker</code>、<code>HeartbeatReceiver</code>、<code>SchedulerBackend</code>、<code>TaskScheduler</code>和<code>DAGScheduler</code>实例。这些实例，在后期会完成event监听、status追踪、heartbeat接受、后台调度、任务调度、DAG调度等工作，是Spark Application得以运行的基石。</p>
+<h2 id="1-SparkContext类初始化"><a href="#1-SparkContext类初始化" class="headerlink" title="1. SparkContext类初始化"></a>1. SparkContext类初始化</h2><p>纵观SpartContext类的初始化过程，主要创建了<code>LiveListenerBus</code>、<code>SparkStatusTracker</code>、<code>HeartbeatReceiver</code>、<code>SchedulerBackend</code>、<code>TaskScheduler</code>和<code>DAGScheduler</code>实例。这些实例，在后期会完成event监听、status追踪、heartbeat接受、后台调度、任务调度、DAG调度等工作，是Spark Application得以运行的基石。</p>
         
           <a class="article-more-a" href="/2019/05/27/Spark源码阅读3——SparkContext初始化流程/#more">more >></a>
         
@@ -249,8 +248,7 @@
 <li>判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。</li>
 <li>执行<code>exec &quot;${SPARK_HOME}&quot;/bin/spark-class org.apache.spark.deploy.SparkSubmit &quot;$@&quot;</code>命令，调用spark-class脚本。</li>
 </ol>
-<p>##2. spark-class脚本</p>
-<ol>
+<h2 id="2-spark-class脚本"><a href="#2-spark-class脚本" class="headerlink" title="2. spark-class脚本"></a>2. spark-class脚本</h2><ol>
 <li>判断${SPARK_HOME}环境变量是否存在，不存在的话调用当前目录下的find-spark-home脚本设置该环境变量。</li>
 <li>执行load-spark-env.sh脚本，设置一些环境变量。</li>
 <li>检查java环境变量。</li>
@@ -968,7 +966,15 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Spark</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">ElasticSearch</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -981,14 +987,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Java</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Spark</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
